@@ -1,4 +1,5 @@
-#include <common/visitor.h>
+#pragma once
+#include <Common/Visitor.h>
 
 #include <string>
 

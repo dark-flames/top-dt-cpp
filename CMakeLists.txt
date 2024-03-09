@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.28)
 
-project(ToyDT)
+project(ToyDT CXX)
 
-include_directories(include)
+set(module_list)
+
+include_directories(src)
 
 add_subdirectory(src)
 add_subdirectory(bin)

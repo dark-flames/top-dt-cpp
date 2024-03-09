@@ -1,8 +1,5 @@
-//
-// Created by darkflames on 3/8/24.
-//
+#pragma once
 
-#include <any>
 #include <memory>
 
 template<typename R>
@@ -16,11 +13,3 @@ class Visitor {
 public:
     virtual R visit(std::shared_ptr<N> target);
 };
-
-
-
-
-
-
-
-

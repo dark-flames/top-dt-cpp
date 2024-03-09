@@ -2,7 +2,8 @@
 // Created by darkflames on 3/8/24.
 //
 
-#include <toy-dt/term.h>
+#include <Term/PiNode.h>
+#include <Term/RefNode.h>
 #include <memory>
 
 using namespace std;
