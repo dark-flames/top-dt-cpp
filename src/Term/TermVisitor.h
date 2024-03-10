@@ -5,6 +5,7 @@
 #include <Term/PiNode.h>
 #include <Term/RefNode.h>
 #include <Term/PiNode.h>
+#include <Term/UnivNode.h>
 #include <memory>
 #include <iostream>
 #include <type_traits>
@@ -25,7 +26,7 @@ public:
 #undef DEF_CASE
         throw std::runtime_error("Unknown Term Ptr.");
     }
-
+protected:
 #define DEF_VISITOR_METHOD(TYPE, METHOD) \
     virtual R visit_##METHOD(NodePtr<TYPE>& node) { \
         TermPtr ptr = generalize_term_ptr(node); \

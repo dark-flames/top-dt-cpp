@@ -8,15 +8,13 @@
 
 namespace term {
 
-using Idx = unsigned int;
-
 class Var : public Term {
 public:
     Idx i;
 
     explicit Var(Idx i) : i(i) {}
 
-    virtual TermTy ty() override {
+    TermTy ty() final {
         return TermTy::Var;
     }
 

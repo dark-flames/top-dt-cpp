@@ -15,7 +15,7 @@ public:
 
     Lambda(std::string name, TermPtr &body) : name(name), body(body) {}
 
-    virtual TermTy ty() override {
+    TermTy ty() final {
         return TermTy::Lambda;
     }
 
@@ -32,7 +32,7 @@ public:
 
     App(TermPtr &fun, TermPtr &param) : fun(fun), param(param) {}
 
-    virtual TermTy ty() override {
+    TermTy ty() final {
         return TermTy::App;
     }
 
@@ -50,7 +50,7 @@ public:
 
     Pi(std::string &name, TermPtr &domain, TermPtr &codomain) : name(name), domain(domain), codomain(codomain) {}
 
-    virtual TermTy ty() override {
+    TermTy ty() final {
         return TermTy::Pi;
     }
 

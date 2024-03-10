@@ -38,3 +38,25 @@ void TermPrettyPrinter::visit_pi(NodePtr<Pi> &target) {
 
     *this->result << codomain;
 }
+
+TermPrettyPrinter& TermPrettyPrinter::push_name(string& n) {
+    this->state->name_stack.push_back(n);
+    return *this;
+}
+
+TermPrettyPrinter& TermPrettyPrinter::pop_name() {
+    this->state->name_stack.pop_back();
+    return *this;
+}
+
+string TermPrettyPrinter::get_name(Idx i) {
+    return this->state->name_stack.at(-i);
+}
+
+BlockPtr TermPrettyPrinter::sub_pretty(TermPtr& term) {
+    auto printer = new TermPrettyPrinter(this->state);
+
+    printer->visit(term);
+
+    return printer->result;
+}
