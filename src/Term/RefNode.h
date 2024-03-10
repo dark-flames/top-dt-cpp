@@ -1,27 +1,27 @@
 #pragma once
 
 #include <Common/Visitor.h>
+#include <Term/Nodes.h>
 #include <Term/TermNode.h>
 
 #include <memory>
 
 namespace term {
 
-class Idx : Term {
-public:
-    unsigned int v;
-    Idx(unsigned int v) : v(v) {}
-};
+using Idx = unsigned int;
 
-template<typename R>
-class IdxVisitor: Visitor<Idx, R> {
-protected:
+class Var : public Term {
 public:
-    R visit(std::shared_ptr<Idx> target) override {
-        return this->visitIdx(target);
+    Idx i;
+
+    explicit Var(Idx i) : i(i) {}
+
+    virtual TermTy ty() override {
+        return TermTy::Var;
     }
-protected:
-    virtual R visitIdx(std::shared_ptr<Idx> target);
-};
 
+    static TermPtr make_term_ptr(Idx i) {
+        return std::make_shared<Var>(i);
+    }
+};
 }

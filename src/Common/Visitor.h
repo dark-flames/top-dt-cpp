@@ -1,15 +1,12 @@
 #pragma once
 
 #include <memory>
+#include <stdexcept>
 
-template<typename R>
-class Operation {
-public:
-    virtual R perform ();
-};
-
-template<typename N, typename R>
+template<typename T, typename R>
 class Visitor {
 public:
-    virtual R visit(std::shared_ptr<N> target);
+    virtual R visit(std::shared_ptr<T> &target) {
+        throw std::runtime_error("Implement visit method.");
+    }
 };

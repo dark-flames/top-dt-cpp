@@ -4,12 +4,19 @@
 
 #include <Term/PiNode.h>
 #include <Term/RefNode.h>
-#include <memory>
+#include <Pretty/Term.h>
+#include <iostream>
 
 using namespace std;
 using namespace term;
 
-int main (int argc, char* argv[]) {
-
-    auto test =  make_shared<Lambda>("a", make_shared<Idx>(1));
+int main(int argc, char *argv[]) {
+    auto test = Pi::make_term_ptr(
+            std::string("p"),
+            Lambda::make_term_ptr(std::string("a"), Var::make_term_ptr(0)),
+            Var::make_term_ptr(0)
+        );
+    auto block = TermPrettyPrinter::pretty(test);
+    std::cout << block->format_inline() << endl;
+    return 0;
 }

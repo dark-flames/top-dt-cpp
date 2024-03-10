@@ -1,65 +1,61 @@
 #pragma once
 
 #include <Common/Visitor.h>
+#include <Term/Nodes.h>
 #include <Term/TermNode.h>
 
 #include <memory>
 
 namespace term {
 // lambda expression
-class Lambda : Term {
+class Lambda : public Term {
 public:
-    char* name;
+    std::string name;
     TermPtr body;
 
-    Lambda(char* name, TermPtr body) : name(name), body(body) {}
-};
+    Lambda(std::string name, TermPtr &body) : name(name), body(body) {}
 
-template<typename R>
-class LambdaVisitor: Visitor<Lambda, R> {
-protected:
-public:
-    R visit(std::shared_ptr<Lambda> target) override {
-        return this->visitLambda(target);
+    virtual TermTy ty() override {
+        return TermTy::Lambda;
     }
-protected:
-    virtual R visitLambda(std::shared_ptr<Lambda> target);
+
+    static TermPtr make_term_ptr(std::string n, TermPtr b) {
+        return std::make_shared<Lambda>(n, b);
+    }
 };
 
 // application
-class App : Term {
+class App : public Term {
 public:
     TermPtr fun;
     TermPtr param;
 
-    App (TermPtr fun, TermPtr param) : fun(fun), param(param) {}
+    App(TermPtr &fun, TermPtr &param) : fun(fun), param(param) {}
+
+    virtual TermTy ty() override {
+        return TermTy::App;
+    }
+
+    static TermPtr make_term_ptr(TermPtr f, TermPtr p) {
+        return std::make_shared<App>(f, p);
+    }
 };
 
-template<typename R>
-class AppVisitor: Visitor<App, R> {
-public:
-    R visit(std::shared_ptr<App> target) override {
-        return this->visitApp(target);
-    }
-protected:
-    virtual R visitApp(std::shared_ptr<App> target);
-};
 //pi type
-class Pi : Term {
+class Pi : public Term {
 public:
-    char* name;
+    std::string name;
     TermPtr domain;
     TermPtr codomain;
-    Pi (char* name, TermPtr domain, TermPtr codomain) : name(name), domain(domain), codomain(codomain) {}
-};
 
-template<typename R>
-class PiVisitor: Visitor<Pi, R> {
-public:
-    R visit(std::shared_ptr<Pi> target) override {
-        return this->visitPi(target);
+    Pi(std::string &name, TermPtr &domain, TermPtr &codomain) : name(name), domain(domain), codomain(codomain) {}
+
+    virtual TermTy ty() override {
+        return TermTy::Pi;
     }
-protected:
-    virtual R visitPi(std::shared_ptr<Pi> target);
+
+    static TermPtr make_term_ptr(std::string n, TermPtr c, TermPtr d) {
+        return std::make_shared<Pi>(n, c, d);
+    }
 };
 }

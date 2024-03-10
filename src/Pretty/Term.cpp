@@ -1,29 +1,40 @@
 #include <Pretty/Term.h>
-#include <Term/RefNode.h>
-#include <Term/RefNode.h>
-#include <Term/TermVisitor.h>
+#include <Pretty/Tokens.h>
 
-#include <string>
 
 using namespace term;
 
-PrettyPrintResult LambdaPrettyPrinter::IdxLambda (std::shared_ptr<Idx> target) {
-    return (PrettyPrint(std::to_string(target->v))).perform();
+void TermPrettyPrinter::visit_var(NodePtr<Var> &target) {
+    *this->result << this->get_name(target->i);
 }
 
-PrettyPrintResult LambdaPrettyPrinter::visitLambda (std::shared_ptr<Lambda> target) {
-    auto body = TermVisitor<PrettyPrintResult>::visit(target->body);
-    return (lambda() >> (target->name) >> dot() >> body).perform();
+void TermPrettyPrinter::visit_lambda(NodePtr<Lambda> &target) {
+    this->push_name(target->name);
+    auto body = this->sub_pretty(target->body);
+    this->pop_name();
+
+    *this->result << lambda << target->name << dot << body;
 }
 
-PrettyPrintResult LambdaPrettyPrinter::visitApp (std::shared_ptr<App> target) {
-    auto fun = TermVisitor<PrettyPrintResult>::visit(target->fun);
-    auto param = TermVisitor<PrettyPrintResult>::visit(target->param);
-    return ( PrettyPrint(fun) >>= param ).perform();
+void TermPrettyPrinter::visit_app(NodePtr<App> &target) {
+    auto fun = this->sub_pretty(target->fun);
+    auto param = this->sub_pretty(target->param);
+    *(this->result) << fun << space << param;
 }
 
-PrettyPrintResult LambdaPrettyPrinter::visitPi (std::shared_ptr<Pi> target) {
-    auto domain = TermVisitor<PrettyPrintResult>::visit(target->domain);
-    auto codomain= TermVisitor<PrettyPrintResult>::visit(target->codomain);
-    return (pi_ty() >> paren(PrettyPrint(target->name) >>= colon() >>= domain) >> codomain).perform();
+void TermPrettyPrinter::visit_pi(NodePtr<Pi> &target) {
+    *this->result << pi;
+    auto domain = this->sub_pretty(target->domain);
+
+    this->push_name(target->name);
+    auto codomain = this->sub_pretty(target->codomain);
+    this->pop_name();
+
+    this->result->sub_block([&](BlockPtr &s) {
+        *s << target->name << colon << domain;
+        s->parenthesized();
+        return s;
+    });
+
+    *this->result << codomain;
 }

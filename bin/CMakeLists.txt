@@ -1,10 +1,7 @@
-add_executable(bin main.cpp
-        ../src/Common/Visitor.cpp
-        ../src/Pretty/Term.cpp)
+add_executable(bin main.cpp)
 
 foreach (module ${module_list})
-    target_include_directories (${module} ${ARGN} PRIVATE )
-    target_link_libraries (${module} ${ARGN} PRIVATE )
+    target_link_libraries(bin PUBLIC ${module})
 endforeach ()
 
 set_property(TARGET bin PROPERTY CXX_STANDARD 20)
