@@ -14,7 +14,7 @@ TermPrettyPrinter& TermPrettyPrinter::pop_name() {
     return *this;
 }
 
-string TermPrettyPrinter::get_name(Idx i) {
+string TermPrettyPrinter::get_name(Idx i) const {
     return this->state->name_stack.at(this->state->name_stack.size() - 1 - i);
 }
 
@@ -44,6 +44,14 @@ void TermPrettyPrinter::visit_lambda(NodePtr<Lambda>& node) {
     this->pop_name();
 
     *this->result << lambda <=> node->name <=> dot <=> body;
+}
+
+void TermPrettyPrinter::visit_llambda(NodePtr<LLambda>& node) {
+    this->push_name(node->name);
+    auto body = this->sub_pretty(node->body);
+    this->pop_name();
+
+    *this->result << _omega <=> node->name <=> dot <=> body;
 }
 
 void TermPrettyPrinter::visit_app(NodePtr<App>& node) {

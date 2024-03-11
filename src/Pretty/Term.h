@@ -36,11 +36,28 @@ private:
 
     TermPrettyPrinter& pop_name();
 
-    string get_name(Idx i);
+    string get_name(Idx i) const;
 
     BlockPtr sub_pretty(TermPtr& term);
 
     LevelPrettyPrinter create_level_printer();
+protected:
+    void visit_var(NodePtr<Var>& target) final;
+
+    void visit_lambda(NodePtr<Lambda>& node) final;
+
+    void visit_llambda(NodePtr<LLambda>& node) final;
+
+    void visit_app(NodePtr<App>& node) final;
+
+    void visit_pi(NodePtr<Pi>& node) final;
+
+    void visit_lpi(NodePtr<LPi>& node) final;
+
+    void visit_univ(NodePtr<Univ>& node) final;
+
+    void visit_univ_omega(NodePtr<UnivOmega>& node) final;
+
 public:
     explicit TermPrettyPrinter(StatePtr s) {
         state = std::move(s);
@@ -64,20 +81,6 @@ public:
         return printer->result;
     }
     friend class LevelPrettyPrinter;
-protected:
-    void visit_var(NodePtr<Var>& target) final;
-
-    void visit_lambda(NodePtr<Lambda>& node) final;
-
-    void visit_app(NodePtr<App>& node) final;
-
-    void visit_pi(NodePtr<Pi>& node) final;
-
-    void visit_lpi(NodePtr<LPi>& node) override;
-
-    void visit_univ(NodePtr<Univ>& node) override;
-
-    void visit_univ_omega(NodePtr<UnivOmega>& node) override;
 };
 
 class LevelPrettyPrinter : public TermVisitor<void> {

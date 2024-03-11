@@ -7,7 +7,8 @@ using Idx = unsigned int;
 
 #define FOR_TERM_TYPES(E) \
     E(Var, var) \
-    E(Lambda, lambda) \
+    E(Lambda, lambda)     \
+    E(LLambda, llambda) \
     E(App, app) \
     E(Pi, pi)             \
     E(LPi, lpi) \

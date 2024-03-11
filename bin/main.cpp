@@ -4,6 +4,7 @@
 
 #include <Term/PiNode.h>
 #include <Term/RefNode.h>
+#include <Eval/EvalVisitor.h>
 #include <Pretty/Term.h>
 #include <iostream>
 

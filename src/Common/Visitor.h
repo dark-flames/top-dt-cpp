@@ -3,6 +3,9 @@
 #include <memory>
 #include <stdexcept>
 
+template<typename N>
+using NodePtr = std::shared_ptr<N>;
+
 template<typename T, typename R>
 class Visitor {
 public:

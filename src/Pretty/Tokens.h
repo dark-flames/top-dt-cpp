@@ -11,3 +11,4 @@ constexpr const char* univ = "U";
 constexpr const char* under_line = "_";
 constexpr const char* lmax = "∩";
 constexpr const char* omega = "Ω";
+constexpr const char* _omega = "ω";

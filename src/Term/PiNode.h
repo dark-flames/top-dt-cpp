@@ -13,7 +13,7 @@ public:
     std::string name;
     TermPtr body;
 
-    Lambda(std::string name, TermPtr& body) : name(name), body(body) {}
+    Lambda(std::string& name, TermPtr& body) : name(name), body(body) {}
 
     TermTy ty() final {
         return TermTy::Lambda;
@@ -21,6 +21,22 @@ public:
 
     static TermPtr make_term_ptr(std::string n, TermPtr b) {
         return std::make_shared<Lambda>(n, b);
+    }
+};
+
+class LLambda : public Term {
+public:
+    std::string name;
+    TermPtr body;
+
+    LLambda(std::string name, TermPtr& body) : name(name), body(body) {}
+
+    TermTy ty() final {
+        return TermTy::LLambda;
+    }
+
+    static TermPtr make_term_ptr(std::string n, TermPtr b) {
+        return std::make_shared<LLambda>(n, b);
     }
 };
 

@@ -7,8 +7,6 @@
 #include <stdexcept>
 
 namespace term {
-template<typename N>
-using NodePtr = std::shared_ptr<N>;
 
 class Term {
 public:
@@ -18,13 +16,23 @@ public:
 using TermPtr = NodePtr<Term>;
 
 template<typename N>
-NodePtr<N> specialize_term_ptr(TermPtr& ptr) {
+inline NodePtr<N> specialize_term_ptr(TermPtr& ptr) {
     return std::static_pointer_cast<N>(ptr);
 }
 
 template<typename N>
-TermPtr generalize_term_ptr(NodePtr<N>& ptr) {
+inline TermPtr generalize_term_ptr(NodePtr<N>& ptr) {
     return std::static_pointer_cast<Term>(ptr);
 }
 
+template<typename N, typename... Args>
+inline TermPtr make_term_ptr(Args&&... args) {
+    auto ptr = std::make_shared<N>(args...);
+
+    return generalize_term_ptr(ptr);
 }
+
+}
+
+using term::Term;
+using term::TermPtr;

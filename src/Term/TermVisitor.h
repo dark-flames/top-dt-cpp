@@ -24,7 +24,7 @@ public:
             }
         FOR_TERM_TYPES(DEF_CASE)
 #undef DEF_CASE
-        throw std::runtime_error("Unknown Term Ptr.");
+        throw runtime_error("Unknown Term Ptr.");
     }
 
 protected:
