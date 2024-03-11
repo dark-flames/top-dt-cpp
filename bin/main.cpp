@@ -1,27 +1,26 @@
-//
-// Created by darkflames on 3/8/24.
-//
-
-#include <Term/PiNode.h>
-#include <Term/RefNode.h>
-#include <Eval/EvalVisitor.h>
-#include <Pretty/Term.h>
+#include <term.h>
+#include <value.h>
+#include <normalize.h>
+#include <pretty.h>
 #include <iostream>
 
 using namespace std;
-using namespace term;
+
+term::TermPtr id () {
+    return term::lambda("a", term::var(0));
+}
 
 int main(int argc, char* argv[]) {
-    auto test = LPi::make_term_ptr("l", Pi::make_term_ptr(
-        std::string("p"),
-        UnivOmega::make_term_ptr(),
-        Univ::make_term_ptr(LMax::make_term_ptr(
-            LSuc::make_term_ptr(LSuc::make_term_ptr(LVar::make_term_ptr(1))),
-            LSuc::make_term_ptr(LZero::make_term_ptr())
-        ))
-    ));
+    auto term = term::app(id(), id());
 
-    auto block = TermPrettyPrinter::pretty_inline(test);
-    std::cout << block->format_inline() << endl;
+    auto block = TermPrettyPrinter::pretty_inline(term);
+    std::cout << "Normalize:" << block->format_inline() << endl;
+
+    auto state = make_shared<EvalState>();
+
+    auto visitor = EvalVisitor(state);
+
+    auto result = visitor.visit(term);
+
     return 0;
 }

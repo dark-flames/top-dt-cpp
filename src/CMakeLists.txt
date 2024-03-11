@@ -14,12 +14,18 @@ macro(add_object_library name common_path)
     set(${name}_sources})
     set(${name}_headers})
     add_headers_and_sources(${name} ${common_path})
+    message("Library: ${name}")
+    message("- Source: ${${name}_sources}")
+    message("- Header: ${${name}_headers}")
     add_library(${name} SHARED ${${name}_sources} ${${name}_headers})
     target_link_libraries(${name} PRIVATE -Wl,--unresolved-symbols=ignore-all)
 endmacro()
 
 add_object_library(common Common)
 add_object_library(term Term)
+add_object_library(value Value)
+add_object_library(normalize Normalize)
 add_object_library(pretty Pretty)
+
 
 set(module_list ${src_modules} PARENT_SCOPE)

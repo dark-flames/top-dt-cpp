@@ -43,7 +43,7 @@ void TermPrettyPrinter::visit_lambda(NodePtr<Lambda>& node) {
     auto body = this->sub_pretty(node->body);
     this->pop_name();
 
-    *this->result << lambda <=> node->name <=> dot <=> body;
+    *this->result << token::lambda <=> node->name <=> token::dot <=> body;
 }
 
 void TermPrettyPrinter::visit_llambda(NodePtr<LLambda>& node) {
@@ -51,7 +51,7 @@ void TermPrettyPrinter::visit_llambda(NodePtr<LLambda>& node) {
     auto body = this->sub_pretty(node->body);
     this->pop_name();
 
-    *this->result << _omega <=> node->name <=> dot <=> body;
+    *this->result << token::_omega <=> node->name <=> token::dot <=> body;
 }
 
 void TermPrettyPrinter::visit_app(NodePtr<App>& node) {
@@ -67,16 +67,16 @@ void TermPrettyPrinter::visit_pi(NodePtr<Pi>& node) {
     auto codomain = this->sub_pretty(node->codomain);
     this->pop_name();
 
-    *this->result << pi;
+    *this->result << token::pi;
     this->result->sub_block(
         [&](BlockPtr& s) {
-            *s << node->name <=> colon <=> domain;
+            *s << node->name <=> token::colon <=> domain;
             s->set_wrapper(BlockWrapper::Parentheses);
             return s;
         }
     );
 
-    *this->result <=> dot <=> codomain;
+    *this->result <=> token::dot <=> codomain;
 }
 
 void TermPrettyPrinter::visit_univ(NodePtr<Univ>& node) {
@@ -88,11 +88,11 @@ void TermPrettyPrinter::visit_univ(NodePtr<Univ>& node) {
 
     block->set_wrapper(BlockWrapper::Bracket);
 
-    *this->result << univ << under_line << block;
+    *this->result << token::univ << token::under_line << block;
 }
 
 void TermPrettyPrinter::visit_univ_omega(NodePtr<UnivOmega>& node) {
-    *this->result << univ << under_line << omega;
+    *this->result << token::univ << token::under_line << token::omega;
 }
 
 void TermPrettyPrinter::visit_lpi(NodePtr<LPi>& node) {
@@ -100,7 +100,7 @@ void TermPrettyPrinter::visit_lpi(NodePtr<LPi>& node) {
     auto codomain = this->sub_pretty(node->codomain);
     this->pop_name();
 
-    *this->result << omega <=> node->name <=> dot <=> codomain;
+    *this->result << token::omega <=> node->name <=> token::dot <=> codomain;
 }
 
 BlockPtr LevelPrettyPrinter::sub_pretty(TermPtr& term) {
@@ -120,7 +120,7 @@ BlockPtr LevelPrettyPrinter::get_result() {
 
         this->base = block;
     } else if (this->offset != 0) {
-        *this->base.value() <=> add <=> to_string(this->offset);
+        *this->base.value() <=> token::add <=> to_string(this->offset);
     }
 
     return this->base.value();
@@ -131,7 +131,7 @@ void LevelPrettyPrinter::visit_lmax(NodePtr<LMax>& node) {
     auto l = this->sub_pretty(node->l);
     auto r = this->sub_pretty(node->r);
 
-    *l <=> lmax <=> r;
+    *l <=> token::lmax <=> r;
 
     this->base = l;
 }

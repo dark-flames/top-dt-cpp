@@ -5,12 +5,14 @@
 #include <Value/ValueNode.h>
 #include <Value/Env.h>
 #include <Value/Closure.h>
+#include <Value/Helper.h>
 
 #include <memory>
 
 
 class EvalState {
-
+public:
+    EvalState() {}
 };
 
 using EvalStatePtr = std::shared_ptr<EvalState>;

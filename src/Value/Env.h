@@ -34,7 +34,13 @@ public:
         return this->count;
     }
 
-    ValuePtr find(Lvl l) const final;
+    ValuePtr find(Lvl l) const final  {
+        if (this->count - 1 == l) {
+            return this->value;
+        } else {
+            return this->prev->find(l);
+        }
+    }
 
     friend class Environment;
 };
@@ -47,14 +53,14 @@ class Environment {
 private:
     EnvNodePtr tail;
 
-    Environment(EnvNodePtr& tail) : tail(tail) {};
+    explicit Environment(EnvNodePtr& tail) : tail(tail) {};
 
 public:
     Environment() {
         this->tail = std::make_shared<EnvNode>();
     }
 
-    ValuePtr find(Lvl l) const {
+    ValuePtr find(Lvl l) const  {
         return this->tail->find(l);
     }
 
@@ -65,5 +71,11 @@ public:
     /**
      * This function will now affect *this, but just return the new environment.
      */
-    Environment push(ValuePtr& value);
+    Environment push(ValuePtr& value) {
+        auto new_tail = static_pointer_cast<EnvNode>(
+            make_shared<EnvConsNode>(this->tail, value)
+        );
+
+        return Environment(new_tail);
+    }
 };

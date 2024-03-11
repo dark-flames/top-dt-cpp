@@ -1,6 +1,7 @@
 add_executable(bin main.cpp)
 
 foreach (module ${module_list})
+    message("Link Module: ${module}")
     target_link_libraries(bin PUBLIC ${module})
 endforeach ()
 

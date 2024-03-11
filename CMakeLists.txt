@@ -22,6 +22,7 @@ endif()
 set(module_list)
 
 include_directories(src)
+include_directories(include)
 
 add_subdirectory(src)
 add_subdirectory(bin)

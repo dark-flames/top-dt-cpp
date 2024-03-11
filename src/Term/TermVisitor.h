@@ -6,6 +6,7 @@
 #include <Term/RefNode.h>
 #include <Term/PiNode.h>
 #include <Term/UnivNode.h>
+#include <Term/Helper.h>
 #include <memory>
 #include <iostream>
 #include <type_traits>
