@@ -10,13 +10,17 @@
 using namespace std;
 using namespace term;
 
-int main(int argc, char *argv[]) {
-    auto test = Pi::make_term_ptr(
-            std::string("p"),
-            Lambda::make_term_ptr(std::string("a"), Var::make_term_ptr(0)),
-            Var::make_term_ptr(0)
-        );
-    auto block = TermPrettyPrinter::pretty(test);
+int main(int argc, char* argv[]) {
+    auto test = LPi::make_term_ptr("l", Pi::make_term_ptr(
+        std::string("p"),
+        UnivOmega::make_term_ptr(),
+        Univ::make_term_ptr(LMax::make_term_ptr(
+            LSuc::make_term_ptr(LSuc::make_term_ptr(LVar::make_term_ptr(1))),
+            LSuc::make_term_ptr(LZero::make_term_ptr())
+        ))
+    ));
+
+    auto block = TermPrettyPrinter::pretty_inline(test);
     std::cout << block->format_inline() << endl;
     return 0;
 }

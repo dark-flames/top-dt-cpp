@@ -16,7 +16,7 @@ namespace term {
 template<typename R>
 class TermVisitor : public Visitor<Term, R> {
 public:
-    virtual R visit(TermPtr &term) {
+    virtual R visit(TermPtr& term) {
 #define DEF_CASE(TYPE, METHOD) \
             if (term->ty() == TermTy::TYPE) { \
                 auto ptr = specialize_term_ptr<TYPE>(term); \
@@ -26,6 +26,7 @@ public:
 #undef DEF_CASE
         throw std::runtime_error("Unknown Term Ptr.");
     }
+
 protected:
 #define DEF_VISITOR_METHOD(TYPE, METHOD) \
     virtual R visit_##METHOD(NodePtr<TYPE>& node) { \

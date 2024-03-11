@@ -22,56 +22,76 @@ enum class BlockWrapper : int {
     Brace,
 };
 
+enum class Indentation : int {
+    Inline,
+    KR, // newline after `{`
+    Allman // `{` in an independent line
+};
+
 class Block {
 private:
     vector<Line> lines;
     BlockWrapper wrapper;
+    Indentation style;
+    unsigned int tabs;
 public:
     Block();
 
-    explicit Block(BlockWrapper w);
+    explicit Block(BlockWrapper w, Indentation s, unsigned int t);
 
-    Block &push(const string &token);
+    Block& push(const string& token);
 
-    Block &new_line(const string &token);
+    Block& new_line(const string& token);
 
     string format_with(
-            string &space,
-            string &line,
-            unsigned int tabs, bool incrTabs
-        );
+        const char* tab,
+        const char* line,
+        unsigned int carried_tabs
+    );
 
     string format_inline();
 
-    Block &push_block(BlockPtr &block);
+    Block& push_block(BlockPtr& block);
 
-    Block &sub_block(const function<BlockPtr(BlockPtr &)> &inner);
+    Block& sub_block(const function<BlockPtr(BlockPtr&)>& inner);
 
-    Block &parenthesized() {
-        this->wrapper = BlockWrapper::Parentheses;
+    Block& set_wrapper(BlockWrapper w) {
+        this->wrapper = w;
         return *this;
     }
 
-    Block &bracketed() {
-        this->wrapper = BlockWrapper::Bracket;
+    Block& tab(unsigned int c = 1) {
+        this->tabs += c;
         return *this;
     }
 
-    Block &braced() {
-        this->wrapper = BlockWrapper::Brace;
+    Block& set_style(Indentation s) {
+        this->style = s;
         return *this;
     }
 
-    Block &operator<<(const string &token) {
+    Block& operator<<(const string& token) {
         return this->push(token);
     }
 
-    Block &operator<<(const char *token) {
+    Block& operator<<(const char* token) {
         return this->push(token);
     }
 
-    Block &operator<<(BlockPtr &block) {
+    Block& operator<<(BlockPtr& block) {
         return this->push_block(block);
+    }
+
+    Block& operator<=> (const string& token) {
+        return *this << " " << token;
+    }
+
+    Block& operator<=>(const char* token) {
+        return *this << " " << token;
+    }
+
+    Block& operator<=>(BlockPtr& block) {
+        return *this << " " << block;
     }
 };
 
@@ -82,17 +102,16 @@ private:
 public:
     Line() : tokens(), extended_blocks() {}
 
-    explicit Line(const string &token) : tokens({token}), extended_blocks() {}
+    explicit Line(const string& token) : tokens({token}), extended_blocks() {}
 
-    Line &push(const string &token);
+    Line& push(const string& token);
 
-    void append_block(BlockPtr &block);
+    void append_block(BlockPtr& block);
 
     string format_with(
-            string &space,
-            string &line,
-            unsigned int tabs,
-            bool incrTabs
-        );
+        const char* tab,
+        const char* line,
+        unsigned int tab_count
+    );
 };
 

@@ -9,7 +9,8 @@ using Idx = unsigned int;
     E(Var, var) \
     E(Lambda, lambda) \
     E(App, app) \
-    E(Pi, pi) \
+    E(Pi, pi)             \
+    E(LPi, lpi) \
     E(LVar, lvar) \
     E(LZero, lzero) \
     E(LSuc, lsuc) \
@@ -19,7 +20,9 @@ using Idx = unsigned int;
 
 
 #define MAKE_SIG(_type, _method) class _type;
+
 FOR_TERM_TYPES(MAKE_SIG)
+
 #undef MAKE_SIG
 
 #define MAKE_ENUM_ITEM(_type, _method) _type,
