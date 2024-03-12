@@ -22,6 +22,7 @@ macro(add_object_library name common_path)
 endmacro()
 
 add_object_library(common Common)
+add_object_library(syntax Syntax)
 add_object_library(term Term)
 add_object_library(value Value)
 add_object_library(normalize Normalize)
