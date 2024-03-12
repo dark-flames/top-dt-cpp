@@ -6,13 +6,11 @@
 #include <functional>
 #include <memory>
 
-using namespace std;
-
 class Block;
 
 class Line;
 
-using BlockPtr = shared_ptr<Block>;
+using BlockPtr = std::unique_ptr<Block>;
 
 
 enum class BlockWrapper : int {
@@ -30,7 +28,7 @@ enum class Indentation : int {
 
 class Block {
 private:
-    vector<Line> lines;
+    std::vector<Line> lines;
     BlockWrapper wrapper;
     Indentation style;
     unsigned int tabs;
@@ -39,21 +37,21 @@ public:
 
     explicit Block(BlockWrapper w, Indentation s, unsigned int t);
 
-    Block& push(const string& token);
+    Block& push(const std::string& token);
 
-    Block& new_line(const string& token);
+    Block& new_line(const std::string& token);
 
-    string format_with(
+    std::string format_with(
         const char* tab,
         const char* line,
         unsigned int carried_tabs
     );
 
-    string format_inline();
+    std::string format_inline();
 
     Block& push_block(BlockPtr& block);
 
-    Block& sub_block(const function<BlockPtr(BlockPtr&)>& inner);
+    Block& sub_block(const std::function<BlockPtr(BlockPtr&)>& inner);
 
     Block& set_wrapper(BlockWrapper w) {
         this->wrapper = w;
@@ -70,7 +68,7 @@ public:
         return *this;
     }
 
-    Block& operator<<(const string& token) {
+    Block& operator<<(const std::string& token) {
         return this->push(token);
     }
 
@@ -82,7 +80,7 @@ public:
         return this->push_block(block);
     }
 
-    Block& operator<=> (const string& token) {
+    Block& operator<=> (const std::string& token) {
         return *this << " " << token;
     }
 
@@ -97,18 +95,18 @@ public:
 
 class Line {
 private:
-    vector<string> tokens;
-    optional<BlockPtr> extended_blocks;
+    std::vector<std::string> tokens;
+    std::optional<BlockPtr> extended_blocks;
 public:
     Line() : tokens(), extended_blocks() {}
 
-    explicit Line(const string& token) : tokens({token}), extended_blocks() {}
+    explicit Line(const std::string& token) : tokens({token}), extended_blocks() {}
 
-    Line& push(const string& token);
+    Line& push(const std::string& token);
 
     void append_block(BlockPtr& block);
 
-    string format_with(
+    std::string format_with(
         const char* tab,
         const char* line,
         unsigned int tab_count

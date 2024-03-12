@@ -18,8 +18,8 @@ public:
         return TermTy::LVar;
     }
 
-    static TermPtr make_term_ptr(Idx i) {
-        return std::make_shared<LVar>(i);
+    TermPtr copy() final {
+        return make_term_ptr<LVar>(this->i);
     }
 };
 
@@ -31,8 +31,8 @@ public:
         return TermTy::LZero;
     }
 
-    static TermPtr make_term_ptr() {
-        return std::make_shared<LZero>();
+    TermPtr copy() final {
+        return make_term_ptr<LZero>();
     }
 };
 
@@ -40,14 +40,14 @@ class LSuc : public Term {
 public:
     TermPtr level;
 
-    explicit LSuc(TermPtr& level) : level(level) {}
+    explicit LSuc(TermPtr& level) : level(std::move(level)) {}
 
     TermTy ty() final {
         return TermTy::LSuc;
     }
 
-    static TermPtr make_term_ptr(TermPtr level) {
-        return std::make_shared<LSuc>(level);
+    TermPtr copy() final {
+        return make_term_ptr<LSuc>(this->level->copy());
     }
 };
 
@@ -56,14 +56,14 @@ public:
     TermPtr l;
     TermPtr r;
 
-    LMax(TermPtr& l, TermPtr& r) : l(l), r(r) {}
+    LMax(TermPtr& l, TermPtr& r) : l(std::move(l)), r(std::move(r)) {}
 
     TermTy ty() final {
         return TermTy::LMax;
     }
 
-    static TermPtr make_term_ptr(TermPtr l, TermPtr r) {
-        return std::make_shared<LMax>(l, r);
+    TermPtr copy() final {
+        return make_term_ptr<LMax>(this->l->copy(), this->r->copy());
     }
 };
 
@@ -71,14 +71,14 @@ class Univ : public Term {
 public:
     TermPtr level;
 
-    explicit Univ(TermPtr& l) : level(l) {}
+    explicit Univ(TermPtr& l) : level(std::move(l)){}
 
     TermTy ty() final {
         return TermTy::Univ;
     }
 
-    static TermPtr make_term_ptr(TermPtr l) {
-        return std::make_shared<Univ>(l);
+    TermPtr copy() final {
+        return make_term_ptr<Univ>(this->level->copy());
     }
 };
 
@@ -88,8 +88,8 @@ public:
         return TermTy::UnivOmega;
     }
 
-    static TermPtr make_term_ptr() {
-        return std::make_shared<UnivOmega>();
+    TermPtr copy() final {
+        return make_term_ptr<UnivOmega>();
     }
 };
 }

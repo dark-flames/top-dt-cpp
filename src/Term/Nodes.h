@@ -32,4 +32,15 @@ enum class TermTy : int {
 #undef MAKE_ENUM_ITEM
 };
 
+inline bool is_level_term(TermTy ty) {
+    switch (ty) {
+        case TermTy::LVar:
+        case TermTy::LZero:
+        case TermTy::LSuc:
+        case TermTy::LMax:
+            return true;
+        default:
+            return false;
+    }
+}
 }

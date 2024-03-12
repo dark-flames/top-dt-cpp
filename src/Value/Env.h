@@ -1,6 +1,6 @@
 #pragma once
 #include <Value/ValueNode.h>
-
+#include <Term/Nodes.h>
 #include <optional>
 #include <vector>
 #include <memory>
@@ -8,18 +8,27 @@
 
 class Environment;
 
+class EnvNode;
+using EnvNodePtr = std::shared_ptr<EnvNode>;
+
 class EnvNode {
 public:
     virtual unsigned int size() const {
         return 0;
     }
 
-    virtual ValuePtr find(Lvl l) const {
-        throw std::runtime_error("Unknown Term Ptr.");
+    virtual ValuePtr find(term::Idx  l) const {
+        throw std::runtime_error("cannot find level.");
+    }
+
+    virtual ValuePtr last() const {
+        throw std::runtime_error("No last element on this env.");
+    }
+
+    virtual EnvNodePtr get_prev() const {
+        throw std::runtime_error("No previous segment.");
     }
 };
-
-using EnvNodePtr = std::shared_ptr<EnvNode>;
 
 class EnvConsNode : public EnvNode {
 private:
@@ -28,18 +37,26 @@ private:
     ValuePtr value;
 public:
     EnvConsNode(EnvNodePtr& prev, ValuePtr& value) :
-        prev(prev), value(value), count(prev->size() + 1) {}
+        prev(prev), value(std::move(value)), count(prev->size() + 1) {}
 
     virtual unsigned int size() const {
         return this->count;
     }
 
-    ValuePtr find(Lvl l) const final  {
-        if (this->count - 1 == l) {
-            return this->value;
+    ValuePtr find(term::Idx l) const final {
+        if (l == 0) {
+            return this->value->copy();
         } else {
-            return this->prev->find(l);
+            return this->prev->find(l - 1);
         }
+    }
+
+    ValuePtr last() const final {
+        return this->value->copy();
+    }
+
+    EnvNodePtr get_prev() const final {
+        return this->prev;
     }
 
     friend class Environment;
@@ -60,7 +77,7 @@ public:
         this->tail = std::make_shared<EnvNode>();
     }
 
-    ValuePtr find(Lvl l) const  {
+    ValuePtr find(term::Idx l) const  {
         return this->tail->find(l);
     }
 
@@ -72,10 +89,25 @@ public:
      * This function will now affect *this, but just return the new environment.
      */
     Environment push(ValuePtr& value) {
-        auto new_tail = static_pointer_cast<EnvNode>(
-            make_shared<EnvConsNode>(this->tail, value)
-        );
+        auto ptr = std::make_shared<EnvConsNode>(this->tail, value);
+        auto new_tail = std::static_pointer_cast<EnvNode>(ptr);
 
         return Environment(new_tail);
+    }
+
+
+    ValuePtr last() const {
+        return this->tail->last();
+    }
+
+
+    Environment pop() const {
+        auto new_tail = this->tail->get_prev();
+
+        return Environment(new_tail);
+    }
+
+    Environment copy() {
+        return Environment(this->tail);
     }
 };

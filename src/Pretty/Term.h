@@ -8,12 +8,10 @@
 #include <memory>
 #include <utility>
 
-using namespace term;
-
 class LevelPrettyPrinter;
 
 class TermPrettyPrinterState {
-    vector<std::string> name_stack;
+    std::vector<std::string> name_stack;
     Indentation block_style;
     bool block_tabs;
 public:
@@ -25,47 +23,47 @@ public:
     friend class TermPrettyPrinter;
 };
 
-using StatePtr = shared_ptr<TermPrettyPrinterState>;
+using StatePtr = std::shared_ptr<TermPrettyPrinterState>;
 
 class TermPrettyPrinter : public TermVisitor<void> {
 private:
     BlockPtr result;
     StatePtr state;
 
-    TermPrettyPrinter& push_name(string& n);
+    TermPrettyPrinter& push_name(std::string& n);
 
     TermPrettyPrinter& pop_name();
 
-    string get_name(Idx i) const;
+    std::string get_name(term::Idx i) const;
 
-    BlockPtr sub_pretty(TermPtr& term);
+    BlockPtr sub_pretty(Term& term);
 
     LevelPrettyPrinter create_level_printer();
 protected:
-    void visit_var(NodePtr<Var>& target) final;
+    void visit_var(term::Var& target) final;
 
-    void visit_lambda(NodePtr<Lambda>& node) final;
+    void visit_lambda(term::Lambda& node) final;
 
-    void visit_llambda(NodePtr<LLambda>& node) final;
+    void visit_llambda(term::LLambda& node) final;
 
-    void visit_app(NodePtr<App>& node) final;
+    void visit_app(term::App& node) final;
 
-    void visit_pi(NodePtr<Pi>& node) final;
+    void visit_pi(term::Pi& node) final;
 
-    void visit_lpi(NodePtr<LPi>& node) final;
+    void visit_lpi(term::LPi& node) final;
 
-    void visit_univ(NodePtr<Univ>& node) final;
+    void visit_univ(term::Univ& node) final;
 
-    void visit_univ_omega(NodePtr<UnivOmega>& node) final;
+    void visit_univ_omega(term::UnivOmega& node) final;
 
 public:
-    explicit TermPrettyPrinter(StatePtr s) {
-        state = std::move(s);
+    explicit TermPrettyPrinter(StatePtr& s) {
+        state = s;
         result = create_block();
     }
 
     BlockPtr create_block() {
-        return make_shared<Block>(
+        return std::make_unique<Block>(
             BlockWrapper::None,
             this->state->block_style,
             this->state->block_tabs
@@ -73,12 +71,12 @@ public:
     }
 
     static BlockPtr pretty_inline(TermPtr& term) {
-        auto state = make_shared<TermPrettyPrinterState>();
+        auto state = std::make_shared<TermPrettyPrinterState>();
         auto printer = new TermPrettyPrinter(state);
 
-        printer->visit(term);
+        printer->visit(*term);
 
-        return printer->result;
+        return std::move(printer->result);
     }
     friend class LevelPrettyPrinter;
 };
@@ -88,7 +86,7 @@ private:
     TermPrettyPrinter* term_printer;
 
     unsigned int offset;
-    optional<BlockPtr> base;
+    std::optional<BlockPtr> base;
 
     LevelPrettyPrinter& clear_result() {
         this->offset = 0;
@@ -97,7 +95,7 @@ private:
         return *this;
     }
 
-    BlockPtr sub_pretty(TermPtr& term);
+    BlockPtr sub_pretty(Term& term);
 public:
     explicit LevelPrettyPrinter(
         TermPrettyPrinter* term_printer
@@ -105,13 +103,13 @@ public:
 
     BlockPtr get_result();
 protected:
-    void visit_lmax(NodePtr<LMax>& node) final;
+    void visit_lmax(term::LMax& node) final;
 
-    void visit_lzero(NodePtr<LZero>& node) final;
+    void visit_lzero(term::LZero& node) final;
 
-    void visit_lsuc(NodePtr<LSuc>& node) final;
+    void visit_lsuc(term::LSuc& node) final;
 
-    void visit_lvar(NodePtr<LVar>& node) final;
+    void visit_lvar(term::LVar& node) final;
 };
 
 

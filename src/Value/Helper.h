@@ -1,6 +1,3 @@
-//
-// Created by darkflames on 3/11/24.
-//
 #pragma once
 #include <Value/Nodes.h>
 #include <Value/ValueNode.h>
@@ -20,34 +17,33 @@ inline ValuePtr var(Lvl l) {
     return make_value_ptr<Var>(l, empty_spine());
 }
 
-ValuePtr neutral_app(ValuePtr s, ValuePtr p) {
+inline ValuePtr neutral_app(ValuePtr s, ValuePtr p) {
     auto ty = s->ty();
     if (ty == ValueTy::Var) {
-        auto ptr = specialize_value_ptr<Var>(s);
+        auto s_var = static_cast<Var*>(s.get());
 
-        auto spine = make_value_ptr<App>(ptr->spine, p);
-        ptr->spine = spine;
+        s_var->spine = make_value_ptr<App>(std::move(s_var->spine), p);
 
-        return generalize_value_ptr(ptr);
+        return s;
     } else {
         throw std::runtime_error("Impossible apply: unexpected function node");
     }
 }
 
-inline ValuePtr lambda(Closure body) {
-    return make_value_ptr<Lambda>(body);
+inline ValuePtr lambda(std::string& name, Closure body) {
+    return make_value_ptr<Lambda>(name, body);
 }
 
-inline ValuePtr l_lambda(Closure body) {
-    return make_value_ptr<LLambda>(body);
+inline ValuePtr l_lambda(std::string& name, Closure body) {
+    return make_value_ptr<LLambda>(name, body);
 }
 
-inline ValuePtr pi(ValuePtr domain, Closure codomain) {
-    return make_value_ptr<Pi>(domain, codomain);
+inline ValuePtr pi(std::string& name,ValuePtr domain, Closure codomain) {
+    return make_value_ptr<Pi>(name, domain, codomain);
 }
 
-inline ValuePtr l_pi(Closure codomain) {
-    return make_value_ptr<LPi>(codomain);
+inline ValuePtr l_pi(std::string& name, Closure codomain) {
+    return make_value_ptr<LPi>(name, codomain);
 }
 
 inline ValuePtr l_nat(MetaNat l) {
@@ -55,22 +51,22 @@ inline ValuePtr l_nat(MetaNat l) {
 }
 
 inline ValuePtr l_incr(ValuePtr l, Lvl c) {
-    auto level = specialize_value_ptr<Level>(l);
+    auto level = static_cast<Level*>(l.get());
     level->pure += c;
 
-    return generalize_value_ptr(level);
+    return l;
 }
 
 inline ValuePtr l_var(Lvl l) {
     std::map<Lvl, MetaNat> m;
     m[l] = 0;
 
-    return make_value_ptr<Level>(m, l);
+    return make_value_ptr<Level>(m, 0);
 }
 
-ValuePtr l_max(ValuePtr l, ValuePtr r) {
-    auto l_level = specialize_value_ptr<Level>(l);
-    auto r_level = specialize_value_ptr<Level>(r);
+inline ValuePtr l_max(ValuePtr l, ValuePtr r) {
+    auto l_level = static_cast<Level*>(l.get());
+    auto r_level = static_cast<Level*>(r.get());
 
     l_level -> pure = std::max(l_level->pure, r_level->pure);
 
@@ -84,7 +80,7 @@ ValuePtr l_max(ValuePtr l, ValuePtr r) {
         }
     }
 
-    return generalize_value_ptr(l_level);
+    return l;
 }
 
 inline ValuePtr univ(ValuePtr level) {

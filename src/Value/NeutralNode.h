@@ -12,10 +12,14 @@ public:
     Lvl l;
     ValuePtr spine;
 
-    Var(Lvl l, ValuePtr& spine) : l(l), spine(spine) {}
+    Var(Lvl l, ValuePtr& spine) : l(l), spine(std::move(spine)) {}
 
     ValueTy ty() final {
         return ValueTy::Var;
+    }
+
+    ValuePtr copy() override {
+        return make_value_ptr<Var>(this->l, this->spine->copy());
     }
 };
 
@@ -32,6 +36,10 @@ public:
     virtual ValuePtr& next() {
         throw std::runtime_error("Impossible");
     }
+
+    ValuePtr copy() override {
+        return make_value_ptr<Spine>();
+    }
 };
 
 class App : public Spine {
@@ -39,10 +47,14 @@ public:
     ValuePtr next;
     ValuePtr parameter;
 
-    App(ValuePtr& next, ValuePtr& parameter) : next(next), parameter(parameter) {}
+    App(ValuePtr& next, ValuePtr& parameter) : next(std::move(next)), parameter(std::move(parameter)) {}
 
-    ValueTy ty() override {
+    ValueTy ty() final {
         return ValueTy::App;
+    }
+
+    ValuePtr copy() override {
+        return make_value_ptr<App>(this->next->copy(), this->parameter->copy());
     }
 };
 }

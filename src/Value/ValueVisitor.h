@@ -10,35 +10,35 @@
 #include <iostream>
 #include <type_traits>
 
-using namespace std;
-
 namespace value {
 
 template<typename R>
 class ValueVisitor : public Visitor<Value, R> {
 public:
-    virtual R visit(ValuePtr & term) {
+    virtual R visit(Value& value) {
+        auto ptr = &value;
+        switch (value.ty()) {
 #define DEF_CASE(TYPE, METHOD) \
-            if (term->ty() == ValueTy::TYPE) { \
-                auto ptr = specialize_value_ptr<TYPE>(term); \
-                return this->visit_##METHOD(ptr); \
-            }
-        FOR_VALUE_TYPES(DEF_CASE)
+            case ValueTy::TYPE:  \
+                return this->visit_##METHOD(*static_cast<TYPE*>(ptr));
+            FOR_VALUE_TYPES(DEF_CASE)
 #undef DEF_CASE
-        throw std::runtime_error("Unknown value ptr.");
+            default:
+                throw std::runtime_error("Unknown Term Ptr.");
+        }
     }
 
 protected:
 #define DEF_VISITOR_METHOD(TYPE, METHOD) \
-    virtual R visit_##METHOD(NodePtr<TYPE>& node) { \
-        ValuePtr ptr = generalize_value_ptr(node); \
-        return Visitor<Value, R>::visit(ptr); \
+    virtual R visit_##METHOD(TYPE& node) { \
+        return Visitor<Value, R>::visit(node); \
     }
 
     FOR_VALUE_TYPES(DEF_VISITOR_METHOD)
 
 #undef DEF_VISITOR_METHOD
 };
-
 }
+
+using value::ValueVisitor;
 

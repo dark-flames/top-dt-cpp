@@ -87,7 +87,7 @@ Block& Block::push_block(BlockPtr& block) {
 }
 
 Block& Block::sub_block(const function<BlockPtr(BlockPtr&)>& inner) {
-    auto block = make_shared<Block>(
+    auto block = make_unique<Block>(
             BlockWrapper::None,
             this->style,
             0
@@ -103,7 +103,7 @@ Line& Line::push(const string& token) {
 }
 
 void Line::append_block(BlockPtr& block) {
-    this->extended_blocks = block;
+    this->extended_blocks = std::move(block);
 }
 
 string Line::format_with(

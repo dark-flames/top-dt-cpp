@@ -1,3 +1,4 @@
+include_directories(../include)
 add_executable(bin main.cpp)
 
 foreach (module ${module_list})

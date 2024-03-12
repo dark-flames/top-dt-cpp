@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 #include <Common/Visitor.h>
 
@@ -7,9 +6,9 @@ namespace value {
 using Lvl = unsigned int;
 
 #define FOR_VALUE_TYPES(E) \
-    E(Var, var) \
+    E(Var, var)            \
     E(Lambda, lambda)      \
-    E(LLambda, lambda) \
+    E(LLambda, llambda) \
     E(Pi, pi) \
     E(LPi, lpi)            \
     E(Level, level) \

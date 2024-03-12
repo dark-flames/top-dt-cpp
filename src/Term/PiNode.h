@@ -13,14 +13,14 @@ public:
     std::string name;
     TermPtr body;
 
-    Lambda(std::string& name, TermPtr& body) : name(name), body(body) {}
+    Lambda(std::string& name, TermPtr& body) : name(name), body(std::move(body)) {}
 
     TermTy ty() final {
         return TermTy::Lambda;
     }
 
-    static TermPtr make_term_ptr(std::string n, TermPtr b) {
-        return std::make_shared<Lambda>(n, b);
+    TermPtr copy() final {
+        return make_term_ptr<Lambda>(this->name, this->body->copy());
     }
 };
 
@@ -29,14 +29,14 @@ public:
     std::string name;
     TermPtr body;
 
-    LLambda(std::string name, TermPtr& body) : name(name), body(body) {}
+    LLambda(std::string& name, TermPtr& body) : name(name), body(std::move(body)) {}
 
     TermTy ty() final {
         return TermTy::LLambda;
     }
 
-    static TermPtr make_term_ptr(std::string n, TermPtr b) {
-        return std::make_shared<LLambda>(n, b);
+    TermPtr copy() final {
+        return make_term_ptr<LLambda>(this->name, this->body->copy());
     }
 };
 
@@ -46,14 +46,14 @@ public:
     TermPtr fun;
     TermPtr param;
 
-    App(TermPtr& fun, TermPtr& param) : fun(fun), param(param) {}
+    App(TermPtr& fun, TermPtr& param) : fun(std::move(fun)), param(std::move(param)) {}
 
     TermTy ty() final {
         return TermTy::App;
     }
 
-    static TermPtr make_term_ptr(TermPtr f, TermPtr p) {
-        return std::make_shared<App>(f, p);
+    TermPtr copy() final {
+        return make_term_ptr<App>(this->fun->copy(), this->param->copy());
     }
 };
 
@@ -64,14 +64,21 @@ public:
     TermPtr domain;
     TermPtr codomain;
 
-    Pi(std::string& name, TermPtr& domain, TermPtr& codomain) : name(name), domain(domain), codomain(codomain) {}
+    Pi(std::string& name, TermPtr& domain, TermPtr& codomain) :
+        name(name),
+        domain(std::move(domain)),
+        codomain(std::move(codomain)) {}
 
     TermTy ty() final {
         return TermTy::Pi;
     }
 
-    static TermPtr make_term_ptr(std::string n, TermPtr c, TermPtr d) {
-        return std::make_shared<Pi>(n, c, d);
+    TermPtr copy() final {
+        return make_term_ptr<Pi>(
+            this->name,
+            this->domain->copy(),
+            this->codomain->copy()
+        );
     }
 };
 
@@ -80,14 +87,14 @@ public:
     std::string name;
     TermPtr codomain;
 
-    LPi(std::string& name, TermPtr& codomain) : name(name), codomain(codomain) {}
+    LPi(std::string& name, TermPtr& codomain) : name(name), codomain(std::move(codomain)) {}
 
     TermTy ty() final {
         return TermTy::LPi;
     }
 
-    static TermPtr make_term_ptr(std::string n, TermPtr d) {
-        return std::make_shared<LPi>(n, d);
+    TermPtr copy() final {
+        return make_term_ptr<LPi>(this->name, this->codomain->copy());
     }
 };
 }

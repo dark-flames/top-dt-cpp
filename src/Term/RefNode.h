@@ -18,8 +18,8 @@ public:
         return TermTy::Var;
     }
 
-    static TermPtr make_term_ptr(Idx i) {
-        return std::make_shared<Var>(i);
+    TermPtr copy() override {
+        return make_term_ptr<Var>(this->i);
     }
 };
 }
