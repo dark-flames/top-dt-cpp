@@ -1,6 +1,6 @@
 #include <TypeCheck/TypeChecker.h>
 
-using namespace  std;
+using namespace std;
 
 
 ValuePtr TypeChecker::bind(Identifier& name, VTyPtr ty) {
@@ -28,7 +28,7 @@ void TypeChecker::pop() {
 TermAndType TypeChecker::find_ref(Identifier& name) {
     auto context_ref = this->context.find(name);
 
-    if(context_ref.has_value()) {
+    if (context_ref.has_value()) {
         auto index = context_ref.value().second;
         return make_pair(
             term::var(index),
@@ -50,7 +50,7 @@ TermAndType TypeChecker::find_ref(Identifier& name) {
 TermPtr TypeChecker::find_level_ref(Identifier& name) {
     auto context_ref = this->context.find_level(name);
 
-    if(context_ref.has_value()) {
+    if (context_ref.has_value()) {
         auto index = context_ref.value();
         return term::var(index);
     } else {

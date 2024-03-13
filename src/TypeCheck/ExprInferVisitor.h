@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Syntax/SyntaxVisitor.h>
 #include <Term/TermNode.h>
 #include <Value/Nodes.h>
@@ -24,4 +25,9 @@ protected:
     TermAndType visit_pi(syntax::Pi& node) final;
 
     TermAndType visit_univ(syntax::Univ& node) final;
+
+public:
+    ExprTypeInferVisitor() {}
+
+    ExprTypeInferVisitor(TypeChecker* type_checker) : type_checker(type_checker) {}
 };

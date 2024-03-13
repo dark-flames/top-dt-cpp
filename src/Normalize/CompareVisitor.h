@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Value/ValueVisitor.h>
 #include <Normalize/EvalVisitor.h>
 #include "EvalVisitor.h"
@@ -11,7 +12,7 @@ enum class Equality : int {
     UnEq
 };
 
-class CompareVisitor: public ValueVisitor<Equality> {
+class CompareVisitor : public ValueVisitor<Equality> {
 private:
     Value* rhs_value;
     EvalVisitor* evaluator;
@@ -23,6 +24,7 @@ private:
         value::Value& rhs,
         bool is_level_binder = false
     );
+
 protected:
     Equality visit_spine(value::Spine& node) final;
 
@@ -43,6 +45,7 @@ protected:
     Equality visit_var(value::Var& node) final;
 
     Equality visit_llambda(value::LLambda& node) final;
+
 public:
     CompareVisitor compare_with(Value* rhs) {
         return CompareVisitor(rhs, this->evaluator);
@@ -52,6 +55,8 @@ public:
         this->rhs_value = rhs;
         return *this;
     }
+
+    CompareVisitor() {}
 
     CompareVisitor(Value* rhs, EvalVisitor* evaluator) : rhs_value(rhs), evaluator(evaluator) {}
 };

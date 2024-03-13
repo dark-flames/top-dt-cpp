@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Term/TermNode.h>
 #include <Term/TermVisitor.h>
 #include <Value/Helper.h>
@@ -19,6 +20,7 @@ private:
     EvalStatePtr state;
 
     Environment bind(bool is_level = false);
+
 protected:
     ValuePtr visit_lmax(term::LMax& node) final;
 
@@ -43,6 +45,7 @@ protected:
     ValuePtr visit_var(term::Var& node) final;
 
     ValuePtr visit_lsuc(term::LSuc& node) final;
+
 public:
     ValuePtr bind_in_place(bool is_level = false) {
         this->env = this->bind(is_level);
@@ -71,4 +74,6 @@ public:
     explicit EvalVisitor(EvalStatePtr& state) : env(), state(state) {}
 
     EvalVisitor(Environment& env, EvalStatePtr& state) : env(env), state(state) {}
+
+    EvalVisitor() : state(std::make_shared<EvalState>()) {}
 };

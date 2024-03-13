@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Value/Nodes.h>
 #include <Value/ValueNode.h>
 #include <Value/Closure.h>
@@ -38,7 +39,7 @@ inline ValuePtr l_lambda(std::string& name, Closure body) {
     return make_value_ptr<LLambda>(name, body);
 }
 
-inline ValuePtr pi(std::string& name,ValuePtr domain, Closure codomain) {
+inline ValuePtr pi(std::string& name, ValuePtr domain, Closure codomain) {
     return make_value_ptr<Pi>(name, domain, codomain);
 }
 
@@ -68,12 +69,12 @@ inline ValuePtr l_max(ValuePtr l, ValuePtr r) {
     auto l_level = static_cast<Level*>(l.get());
     auto r_level = static_cast<Level*>(r.get());
 
-    l_level -> pure = std::max(l_level->pure, r_level->pure);
+    l_level->pure = std::max(l_level->pure, r_level->pure);
 
     for (const auto& pair : r_level->m) {
         auto l_v = l_level->m.find(pair.first);
 
-        if(l_v == l_level->m.end()) {
+        if (l_v == l_level->m.end()) {
             l_level->m.insert(pair);
         } else if (l_v->second > pair.second) {
             l_v->second = pair.second;

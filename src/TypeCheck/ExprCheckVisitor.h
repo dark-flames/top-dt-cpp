@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Syntax/SyntaxVisitor.h>
 #include <Term/TermNode.h>
 #include <Value/Nodes.h>
@@ -7,7 +8,6 @@
 #include <Exception/TypeCheck.h>
 
 class TypeChecker;
-
 
 
 class ExprCheckVisitor : public SyntaxVisitor<TermPtr> {
@@ -20,10 +20,14 @@ protected:
 public:
     TermPtr visit(Syntax& node) override;
 
-public:
     void set_ty(VTy* ty) {
         this->as = ty;
     }
+
+    ExprCheckVisitor() {}
+
+    ExprCheckVisitor(TypeChecker* type_checker)
+        : type_checker(type_checker), as(nullptr) {}
 };
 
 

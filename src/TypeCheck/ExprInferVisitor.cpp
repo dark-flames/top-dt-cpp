@@ -6,11 +6,11 @@ using namespace std;
 ValuePtr pi_univ(optional<ValuePtr> level_l, optional<ValuePtr> level_r) {
     if (level_l.has_value() && level_r.has_value()) {
         return value::univ(
-                value::l_max(
-                    std::move(level_l.value()),
-                    std::move(level_r.value())
-                )
-            );
+            value::l_max(
+                std::move(level_l.value()),
+                std::move(level_r.value())
+            )
+        );
     } else {
         return value::univ_omega();
     }
@@ -33,9 +33,9 @@ TermAndType ExprTypeInferVisitor::visit_app(syntax::App& node) {
         auto res_ty = this->type_checker->eval_closure(ty->codomain, std::move(p_value));
 
         return make_pair(
-                term::app(std::move(f_term), std::move(p_term)),
-                std::move(res_ty)
-            );
+            term::app(std::move(f_term), std::move(p_term)),
+            std::move(res_ty)
+        );
     } else if (f_ty->ty() == ValueTy::LPi) {
         auto ty = static_cast<value::LPi*>(f_ty.get());
 
@@ -53,15 +53,15 @@ TermAndType ExprTypeInferVisitor::visit_app(syntax::App& node) {
 }
 
 TermAndType ExprTypeInferVisitor::visit_pi(syntax::Pi& node) {
-    if(node.domain->ty() == SyntaxTy::Level) {
+    if (node.domain->ty() == SyntaxTy::Level) {
         auto v = this->type_checker->bind_level(node.name);
         auto res = this->type_checker->check_ty(*node.codomain);
         this->type_checker->pop();
 
         return make_pair(
-                term::l_pi(node.name, std::move(res.first)),
-                value::univ_omega()
-            );
+            term::l_pi(node.name, std::move(res.first)),
+            value::univ_omega()
+        );
     } else {
         auto domain_res = this->type_checker->check_ty(*node.domain);
         auto domain = std::move(domain_res.first);
@@ -86,9 +86,9 @@ TermAndType ExprTypeInferVisitor::visit_univ(syntax::Univ& node) {
 
 
     return make_pair(
-            term::univ(std::move(level)),
-            value::univ(value::l_incr(std::move(v_level), 1))
-        );
+        term::univ(std::move(level)),
+        value::univ(value::l_incr(std::move(v_level), 1))
+    );
 }
 
 

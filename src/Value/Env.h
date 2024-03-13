@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Value/ValueNode.h>
 #include <Term/Nodes.h>
 #include <optional>
@@ -9,6 +10,7 @@
 class Environment;
 
 class EnvNode;
+
 using EnvNodePtr = std::shared_ptr<EnvNode>;
 
 class EnvNode {
@@ -17,7 +19,7 @@ public:
         return 0;
     }
 
-    virtual ValuePtr find(term::Idx  l) const {
+    virtual ValuePtr find(term::Idx l) const {
         throw std::runtime_error("cannot find level.");
     }
 
@@ -77,7 +79,7 @@ public:
         this->tail = std::make_shared<EnvNode>();
     }
 
-    ValuePtr find(term::Idx l) const  {
+    ValuePtr find(term::Idx l) const {
         return this->tail->find(l);
     }
 

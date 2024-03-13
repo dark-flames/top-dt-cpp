@@ -20,7 +20,7 @@ Equality merge_equality(Equality l, Equality r) {
 Equality CompareVisitor::try_rhs_eta_conv_or(Value& node, Equality equality) {
     auto is_lambda = this->rhs_value->ty() == ValueTy::Lambda;
     auto is_l_lambda = this->rhs_value->ty() == ValueTy::LLambda;
-    if(is_l_lambda || is_lambda) {
+    if (is_l_lambda || is_lambda) {
         auto new_visitor = this->compare_with(&node);
         auto res = new_visitor.visit(*this->rhs_value);
         return res;
@@ -74,7 +74,8 @@ Equality CompareVisitor::visit_pi(Pi& node) {
         this->evaluator->pop_variable();
 
         return merge_equality(domain_result, codomain_result);
-    } {
+    }
+    {
         return Equality::UnEq;
     }
 }
@@ -92,7 +93,8 @@ Equality CompareVisitor::visit_lpi(LPi& node) {
         this->evaluator->pop_variable();
 
         return result;
-    } {
+    }
+    {
         return Equality::UnEq;
     }
 }
@@ -113,7 +115,8 @@ Equality CompareVisitor::visit_level(Level& node) {
         auto rhs = static_cast<value::Level*>(this->rhs_value);
         return node.pure == rhs->pure && compare_level_map(node.m, rhs->m) ?
                Equality::Eq : Equality::UnEq;
-    } {
+    }
+    {
         return Equality::UnEq;
     }
 }
@@ -126,7 +129,8 @@ Equality CompareVisitor::visit_univ(Univ& node) {
         );
         return param_visitor.visit(*node.level) == Equality::Eq ?
                Equality::Eq : Equality::UnEq;
-    } {
+    }
+    {
         return Equality::UnEq;
     }
 }
@@ -153,11 +157,12 @@ Equality CompareVisitor::visit_app(App& node) {
             );
 
             return next_visitor.visit(*node.next) == Equality::Eq ?
-                Equality::Eq : Equality::UnEq;
+                   Equality::Eq : Equality::UnEq;
         } else {
             return Equality::UnEq;
         }
-    } {
+    }
+    {
         return Equality::UnEq;
     }
 }
@@ -167,8 +172,8 @@ Equality CompareVisitor::visit_var(Var& node) {
         auto rhs = static_cast<value::Var*>(this->rhs_value);
         if (rhs->l == node.l) {
             auto new_visitor = this->compare_with(
-                    rhs->spine.get()
-                );
+                rhs->spine.get()
+            );
             if (new_visitor.visit(*node.spine) == Equality::Eq) {
                 return Equality::Eq;
             } else {
@@ -177,7 +182,8 @@ Equality CompareVisitor::visit_var(Var& node) {
         } else {
             return Equality::ConditionallyEq;
         }
-    } {
+    }
+    {
         return this->try_rhs_eta_conv_or(node, Equality::ConditionallyEq);
     }
 }

@@ -1,7 +1,7 @@
 #include <Value/Context.h>
 #include <Exception/TypeCheck.h>
 
-using namespace  std;
+using namespace std;
 
 optional<ValueWithSize> ContextConsNode::find(Identifier& ref) const {
     if (this->name == name) {
@@ -91,7 +91,7 @@ std::optional<Idx> Context::find_level(T& index) const {
     }
 }
 
-Context Context::push(Identifier & name, VTyPtr& vty) {
+Context Context::push(Identifier& name, VTyPtr& vty) {
     auto ptr = make_shared<ContextConsNode>(this->tail, vty, name);
     auto new_tail = std::static_pointer_cast<ContextNode>(ptr);
 

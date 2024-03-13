@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Exception/Common.h>
 #include <Exception/Declaration.h>
 #include <Value/Context.h>
@@ -27,7 +28,8 @@ public:
     ContextFoundNonLevel(VTy& ty) : ty(ty) {}
 };
 
-class TypeCheckException : public Exception {};
+class TypeCheckException : public Exception {
+};
 
 
 class UnknownReference : public TypeCheckException {
@@ -52,10 +54,14 @@ public:
     ) : cycle(inner.cycle) {}
 };
 
-class NonPi : public TypeCheckException {};
+class NonPi : public TypeCheckException {
+};
 
-class ApplyNonPi : public TypeCheckException {};
+class ApplyNonPi : public TypeCheckException {
+};
 
-class NotType : public TypeCheckException {};
+class NotType : public TypeCheckException {
+};
 
-class UnificationException : public TypeCheckException {};
+class UnificationException : public TypeCheckException {
+};

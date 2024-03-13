@@ -32,7 +32,7 @@ TermPtr normalize(TermPtr& t) {
     return normalize_open_term(env, t);
 }
 
-Equality compare_value(ValuePtr& t, ValuePtr&  r) {
+Equality compare_value(ValuePtr& t, ValuePtr& r) {
     auto eval_state = std::make_shared<EvalState>();
     auto env = Environment();
     auto evaluator = EvalVisitor(env, eval_state);

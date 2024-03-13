@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Normalize/EvalVisitor.h>
 #include <Normalize/ReadBackVisitor.h>
 #include <Normalize/Evaluation.h>

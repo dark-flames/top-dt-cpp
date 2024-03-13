@@ -13,11 +13,11 @@ TermPtr ExprCheckVisitor::visit_lambda(syntax::Lambda& node) {
         auto codomain = this->type_checker
             ->eval_closure(as_pi->codomain, std::move(v));
         auto body = this->type_checker->check_expr(
-                *node.body, codomain.get()
-            );
+            *node.body, codomain.get()
+        );
         this->type_checker->pop();
         return term::lambda(node.name, std::move(body));
-    } else if(this->as->ty() == ValueTy::LPi) {
+    } else if (this->as->ty() == ValueTy::LPi) {
         auto as_pi = static_cast<value::LPi*>(this->as);
 
         auto v = this->type_checker->bind_level(node.name);

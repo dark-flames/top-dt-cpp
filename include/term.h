@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Term/Helper.h>
 #include <Term/Nodes.h>
 #include <Term/PiNode.h>

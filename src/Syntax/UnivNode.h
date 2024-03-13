@@ -58,7 +58,7 @@ class Univ : public Syntax {
 public:
     SyntaxPtr level;
 
-    Univ(SyntaxPtr& l) : level(std::move(l)){}
+    Univ(SyntaxPtr& l) : level(std::move(l)) {}
 
     SyntaxTy ty() final {
         return SyntaxTy::Univ;

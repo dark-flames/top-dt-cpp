@@ -24,7 +24,7 @@ BlockPtr TermPrettyPrinter::sub_pretty(Term& term) {
 
     printer->visit(term);
 
-    if(this->state->block_tabs) {
+    if (this->state->block_tabs) {
         printer->result->tab();
     }
 
@@ -155,7 +155,7 @@ void LevelPrettyPrinter::visit_lzero(LZero& node) {
 
 void LevelPrettyPrinter::visit_lsuc(LSuc& node) {
     this->visit(*node.level);
-    ++ this->offset;
+    ++this->offset;
 }
 
 void LevelPrettyPrinter::visit_lvar(LVar& node) {

@@ -80,7 +80,7 @@ public:
         return this->push_block(block);
     }
 
-    Block& operator<=> (const std::string& token) {
+    Block& operator<=>(const std::string& token) {
         return *this << " " << token;
     }
 

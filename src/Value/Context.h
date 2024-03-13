@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Value/ValueNode.h>
 #include <Term/Nodes.h>
 #include <Syntax/RefNode.h>
@@ -11,6 +12,7 @@
 class Context;
 
 class ContextNode;
+
 using ContextNodePtr = std::shared_ptr<ContextNode>;
 using ValueWithSize = std::pair<VTyPtr, Size>;
 
@@ -127,9 +129,9 @@ public:
     /**
      * This function will now affect *this, but just return the new environment.
      */
-    Context push(Identifier & name, VTyPtr& vty);
+    Context push(Identifier& name, VTyPtr& vty);
 
-    Context push_level(Identifier & name);
+    Context push_level(Identifier& name);
 
     Context pop();
 };

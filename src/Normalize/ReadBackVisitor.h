@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Value/ValueVisitor.h>
 #include <Normalize/EvalVisitor.h>
 
@@ -11,7 +12,7 @@ using ReadBackStatePtr = std::shared_ptr<ReadBackState>;
 class ReadBackState {
 private:
 public:
-    ReadBackState()  {}
+    ReadBackState() {}
 };
 
 class ReadBackVisitor : public ValueVisitor<TermPtr> {

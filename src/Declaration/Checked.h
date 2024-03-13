@@ -1,8 +1,10 @@
 #pragma once
+
 #include <Declaration/Common.h>
 #include <Term/TermNode.h>
 
 #include <string>
+
 class CheckedSignature : public WithSignature {
 public:
     VTyPtr type;

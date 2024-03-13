@@ -1,9 +1,11 @@
 #pragma once
+
 #include <Exception/Common.h>
 #include <vector>
 #include <string>
 
-class DeclarationException : public Exception {};
+class DeclarationException : public Exception {
+};
 
 class CyclingDependency : public DeclarationException {
 public:

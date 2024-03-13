@@ -11,7 +11,7 @@
 using namespace std;
 using namespace term;
 
-TermPtr id () {
+TermPtr id() {
     return lambda("a", var(0));
 }
 
@@ -26,17 +26,19 @@ TermPtr suc() {
     v.push_back(var(1));
     v.push_back(var(0));
 
-    return lambda("n", l_lambda("l", abs(
-        {"A", "zero", "suc"},
-        app(var(0), apps(var(4), v))
-    )));
+    return lambda(
+        "n", l_lambda(
+            "l", abs(
+                {"A", "zero", "suc"},
+                app(var(0), apps(var(4), v))
+            )));
 }
 
-TermPtr nat (unsigned int i) {
+TermPtr nat(unsigned int i) {
     auto r = zero();
-    while(i > 0) {
+    while (i > 0) {
         r = app(suc(), std::move(r));
-        i --;
+        i--;
     }
 
     return r;
@@ -54,10 +56,12 @@ TermPtr nat_plus() {
     v.push_back(var(2));
     v.push_back(apps(var(4), u));
     v.push_back(var(0));
-    return abs({"n", "m"}, l_lambda("l", abs(
-        {"A", "zero", "suc"},
-        apps(var(5), v)
-    )));
+    return abs(
+        {"n", "m"}, l_lambda(
+            "l", abs(
+                {"A", "zero", "suc"},
+                apps(var(5), v)
+            )));
 }
 
 int main(int argc, char* argv[]) {

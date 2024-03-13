@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Declaration/Common.h>
 #include <Syntax/SyntaxNode.h>
 

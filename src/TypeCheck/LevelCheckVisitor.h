@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Syntax/SyntaxVisitor.h>
 #include <Term/TermNode.h>
 #include <Value/Nodes.h>
@@ -19,4 +20,9 @@ protected:
     TermPtr visit_ref(syntax::Ref& node) override;
 
     TermPtr visit_lsuc(syntax::LSuc& node) override;
+
+public:
+    LevelCheckVisitor() {}
+
+    LevelCheckVisitor(TypeChecker* type_checker) : type_checker(type_checker) {}
 };

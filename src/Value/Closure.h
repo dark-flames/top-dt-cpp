@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Term/TermNode.h>
 #include <Value/Env.h>
 

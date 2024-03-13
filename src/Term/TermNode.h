@@ -9,6 +9,7 @@
 namespace term {
 
 class Term;
+
 using TermPtr = NodePtr<Term>;
 using Ty = Term;
 using TyPtr = TermPtr;
@@ -21,7 +22,7 @@ public:
 };
 
 template<typename N, typename... Args>
-inline TermPtr make_term_ptr(Args&&... args) {
+inline TermPtr make_term_ptr(Args&& ... args) {
     TermPtr ptr = std::make_unique<N>(args...);
 
     return ptr;

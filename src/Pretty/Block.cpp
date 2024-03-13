@@ -48,7 +48,7 @@ string Block::format_with(
         if (i != this->lines.begin() && i != this->lines.end() - 1) {
             current += line;
         }
-        current += i -> format_with(tab, line, carried_tabs + this->tabs);
+        current += i->format_with(tab, line, carried_tabs + this->tabs);
     }
 
     const char* s[] = {"", "", ""};
@@ -88,10 +88,10 @@ Block& Block::push_block(BlockPtr& block) {
 
 Block& Block::sub_block(const function<BlockPtr(BlockPtr&)>& inner) {
     auto block = make_unique<Block>(
-            BlockWrapper::None,
-            this->style,
-            0
-        );
+        BlockWrapper::None,
+        this->style,
+        0
+    );
     auto res = inner(block);
     this->push_block(res);
     return *this;

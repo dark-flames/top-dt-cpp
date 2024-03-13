@@ -35,6 +35,7 @@ protected:
     virtual R visit_##METHOD(TYPE& node) { \
         throw EmptySyntaxVisitorMethod(CONCAT(visit_, METHOD)); \
     }
+
     FOR_SYN_TYPES(DEF_VISITOR_METHOD)
 
 #undef DEF_VISITOR_METHOD
@@ -43,4 +44,4 @@ protected:
 };
 }
 
-using syntax::SyntaxVisitor ;
+using syntax::SyntaxVisitor;

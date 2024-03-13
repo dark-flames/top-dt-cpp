@@ -71,7 +71,7 @@ class Univ : public Term {
 public:
     TermPtr level;
 
-    explicit Univ(TermPtr& l) : level(std::move(l)){}
+    explicit Univ(TermPtr& l) : level(std::move(l)) {}
 
     TermTy ty() final {
         return TermTy::Univ;

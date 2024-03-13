@@ -17,8 +17,8 @@ Declaration* DeclarationResolver::get_decl(Entry& entry) {
 bool DeclarationResolver::dependency_detect(Entry& from, Entry& to) {
     auto current = this->waiting_for.find(from);
 
-    while(current != this->waiting_for.end()) {
-        if(current->second == to) {
+    while (current != this->waiting_for.end()) {
+        if (current->second == to) {
             return true;
         } else {
             current = this->waiting_for.find(current->second);
@@ -37,9 +37,9 @@ WithSignature* DeclarationResolver::try_check_signature(Entry& entry) {
     auto vty = this->type_checker->eval(*res.first);
 
     DeclarationPtr new_dec = make_unique<CheckedSignature>(
-            vty,
-            unchecked->body
-        );
+        vty,
+        unchecked->body
+    );
 
     this->declarations[std::move(entry)] = std::move(new_dec);
 

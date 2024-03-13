@@ -14,20 +14,20 @@ Environment EvalVisitor::bind(bool is_level) {
 }
 
 
-ValuePtr EvalVisitor::eval_closure(value::Closure& closure, ValuePtr value){
+ValuePtr EvalVisitor::eval_closure(value::Closure& closure, ValuePtr value) {
     auto new_env = closure.env.push(value);
     auto visitor = EvalVisitor(new_env, this->state);
     return visitor.visit(*closure.term);
 }
 
 ValuePtr EvalVisitor::value_application(ValuePtr f, ValuePtr p) {
-    if(f->ty() == value::ValueTy::Lambda) {
+    if (f->ty() == value::ValueTy::Lambda) {
         auto fun = static_cast<value::Lambda*>(f.get());
         return this->eval_closure(fun->body, std::move(p));
-    } else if(f->ty() == value::ValueTy::LLambda) {
+    } else if (f->ty() == value::ValueTy::LLambda) {
         auto fun = static_cast<value::LLambda*>(f.get());
         return this->eval_closure(fun->body, std::move(p));
-    }else {
+    } else {
         //f must be a neutral term
         return value::neutral_app(std::move(f), std::move(p));
     }

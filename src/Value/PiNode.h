@@ -51,8 +51,8 @@ public:
 
     Pi(
         std::string& name,
-        ValuePtr & domain,
-        Closure & codomain
+        ValuePtr& domain,
+        Closure& codomain
     ) : name(name), domain(std::move(domain)), codomain(std::move(codomain)) {}
 
     ValueTy ty() final {
@@ -69,7 +69,7 @@ public:
     std::string name;
     Closure codomain;
 
-    LPi(std::string& name,Closure & codomain) : name(name), codomain(std::move(codomain)) {}
+    LPi(std::string& name, Closure& codomain) : name(name), codomain(std::move(codomain)) {}
 
     ValueTy ty() final {
         return ValueTy::LPi;

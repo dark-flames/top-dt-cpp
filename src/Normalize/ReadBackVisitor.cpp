@@ -9,7 +9,7 @@ term::Idx level_to_index(unsigned int c, value::Lvl l) {
 TermPtr ReadBackVisitor::visit_var(value::Var& node) {
     auto root = term::var(level_to_index(this->evaluator.env_size(), node.l));
 
-    if(node.spine->ty() == value::ValueTy::Spine) {
+    if (node.spine->ty() == value::ValueTy::Spine) {
         return root;
     } else {
         auto spine_visitor = SpineVisitor(this, root);

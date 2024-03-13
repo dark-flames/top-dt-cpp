@@ -39,6 +39,7 @@ private:
     BlockPtr sub_pretty(Term& term);
 
     LevelPrettyPrinter create_level_printer();
+
 protected:
     void visit_var(term::Var& target) final;
 
@@ -78,6 +79,7 @@ public:
 
         return std::move(printer->result);
     }
+
     friend class LevelPrettyPrinter;
 };
 
@@ -96,12 +98,14 @@ private:
     }
 
     BlockPtr sub_pretty(Term& term);
+
 public:
     explicit LevelPrettyPrinter(
         TermPrettyPrinter* term_printer
     ) : term_printer(term_printer), offset(0), base({}) {}
 
     BlockPtr get_result();
+
 protected:
     void visit_lmax(term::LMax& node) final;
 

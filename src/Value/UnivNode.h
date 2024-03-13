@@ -43,6 +43,7 @@ public:
 class UnivOmega : public Value {
 public:
     UnivOmega() {}
+
     ValueTy ty() final {
         return ValueTy::UnivOmega;
     }

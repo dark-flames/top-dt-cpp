@@ -7,6 +7,7 @@
 #include <TypeCheck/ExprCheckVisitor.h>
 #include <TypeCheck/ExprInferVisitor.h>
 #include <TypeCheck/LevelCheckVisitor.h>
+#include <Pretty/Term.h>
 #include <memory>
 
 class TypeChecker {
@@ -42,6 +43,18 @@ public:
     TermAndType infer_expr(Syntax& syn);
 
     Equality conv(Value& l, Value* r);
+
+    TypeChecker() {
+        resolver = DeclarationResolver(this);
+        context = Context();
+        auto env = Environment();
+        auto eval_state = std::make_shared<EvalState>();
+        eval_visitor = EvalVisitor(env, eval_state);
+        compare_visitor = CompareVisitor(nullptr, &this->eval_visitor);
+        check_visitor = ExprCheckVisitor(this);
+        infer_visitor = ExprTypeInferVisitor(this);
+        level_visitor = LevelCheckVisitor(this);
+    }
 };
 
 using TypeCheckerPtr = std::shared_ptr<TypeChecker>;

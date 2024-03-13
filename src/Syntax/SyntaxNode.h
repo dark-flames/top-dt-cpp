@@ -9,6 +9,7 @@
 namespace syntax {
 
 class Syntax;
+
 using SyntaxPtr = NodePtr<Syntax>;
 
 class Syntax {
@@ -19,7 +20,7 @@ public:
 };
 
 template<typename N, typename... Args>
-inline SyntaxPtr make_syn_ptr(Args&&... args) {
+inline SyntaxPtr make_syn_ptr(Args&& ... args) {
     SyntaxPtr ptr = std::make_unique<N>(args...);
 
     return ptr;
