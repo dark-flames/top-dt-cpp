@@ -15,3 +15,4 @@ public:
 };
 
 using MetaNat = unsigned int;
+using Size = unsigned int;

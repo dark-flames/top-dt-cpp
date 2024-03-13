@@ -10,7 +10,10 @@
 namespace value {
 class Value;
 
+using VTy = Value;
 using ValuePtr = NodePtr<Value>;
+using VTyPtr = ValuePtr;
+
 class Value {
 public:
     virtual ValueTy ty() { throw std::runtime_error("Cannot call ty() on the base class `Value`"); }
@@ -36,4 +39,6 @@ inline N& specialize_value(Value& v) {
 }
 
 using value::Value;
+using value::VTy;
 using value::ValuePtr;
+using value::VTyPtr;

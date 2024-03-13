@@ -96,12 +96,12 @@ public:
     }
 
 
-    ValuePtr last() const {
+    [[nodiscard]] ValuePtr last() const {
         return this->tail->last();
     }
 
 
-    Environment pop() const {
+    [[nodiscard]] Environment pop() const {
         auto new_tail = this->tail->get_prev();
 
         return Environment(new_tail);

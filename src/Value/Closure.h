@@ -21,3 +21,5 @@ public:
     }
 };
 }
+
+using value::Closure;

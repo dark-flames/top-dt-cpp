@@ -1,6 +1,9 @@
 #include <syntax.h>
 #include <term.h>
 #include <normalize.h>
+#include <exception.h>
+#include <declaration.h>
+#include <type_check.h>
 #include <pretty.h>
 #include <iostream>
 #include <utility>

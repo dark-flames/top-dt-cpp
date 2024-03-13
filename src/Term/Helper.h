@@ -13,6 +13,10 @@ inline TermPtr var(Idx i) {
     return make_term_ptr<Var>(i);
 }
 
+inline TermPtr def_ref(std::string entry) {
+    return make_term_ptr<DefRef>(entry);
+}
+
 inline TermPtr lambda(std::string n, TermPtr b) {
     return make_term_ptr<Lambda>(n, b);
 }

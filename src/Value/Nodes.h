@@ -32,3 +32,4 @@ enum class ValueTy : int {
 }
 
 using value::Lvl;
+using value::ValueTy;

@@ -10,6 +10,8 @@ namespace term {
 
 class Term;
 using TermPtr = NodePtr<Term>;
+using Ty = Term;
+using TyPtr = TermPtr;
 
 class Term {
 public:
@@ -28,4 +30,6 @@ inline TermPtr make_term_ptr(Args&&... args) {
 }
 
 using term::Term;
+using term::Ty;
 using term::TermPtr;
+using term::TyPtr;

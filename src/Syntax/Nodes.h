@@ -26,3 +26,5 @@ enum class SyntaxTy : int {
 #undef MAKE_ENUM_ITEM
 };
 }
+
+using syntax::SyntaxTy;

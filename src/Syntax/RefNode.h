@@ -6,13 +6,15 @@
 
 #include <memory>
 
+using Identifier = std::string;
+
 namespace syntax {
 
 class Ref : public Syntax {
 public:
-    std::string name;
+    Identifier name;
 
-    Ref(std::string& name) : name(name) {}
+    Ref(Identifier& name) : name(name) {}
 
     SyntaxTy ty() final {
         return SyntaxTy::Ref;

@@ -6,8 +6,9 @@ namespace term {
 using Idx = unsigned int;
 
 #define FOR_TERM_TYPES(E) \
-    E(Var, var) \
-    E(Lambda, lambda)     \
+    E(Var, var)           \
+    E(DefRef, def_ref)    \
+    E(Lambda, lambda)   \
     E(LLambda, llambda) \
     E(App, app) \
     E(Pi, pi)             \
@@ -44,3 +45,6 @@ inline bool is_level_term(TermTy ty) {
     }
 }
 }
+
+using term::Idx;
+using term::TermTy;

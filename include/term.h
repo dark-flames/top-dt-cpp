@@ -5,4 +5,5 @@
 #include <Term/RefNode.h>
 #include <Term/TermNode.h>
 #include <Term/UnivNode.h>
+#include "Value/Context.h"
 #include <Term/TermVisitor.h>

@@ -44,9 +44,15 @@ protected:
 
     Equality visit_llambda(value::LLambda& node) final;
 public:
-    CompareVisitor compare_with(Value* lhs) {
-        return CompareVisitor(lhs, this->evaluator);
+    CompareVisitor compare_with(Value* rhs) {
+        return CompareVisitor(rhs, this->evaluator);
     }
+
+    CompareVisitor& set_rhs(Value* rhs) {
+        this->rhs_value = rhs;
+        return *this;
+    }
+
     CompareVisitor(Value* rhs, EvalVisitor* evaluator) : rhs_value(rhs), evaluator(evaluator) {}
 };
 

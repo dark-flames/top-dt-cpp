@@ -22,8 +22,11 @@ add_object_library(common Common)
 add_object_library(syntax Syntax)
 add_object_library(term Term)
 add_object_library(value Value)
+add_object_library(declaration Declaration)
 add_object_library(normalize Normalize)
 add_object_library(pretty Pretty)
+add_object_library(exception Exception)
+add_object_library(type_check TypeCheck)
 
 
 set(module_list ${src_modules} PARENT_SCOPE)
