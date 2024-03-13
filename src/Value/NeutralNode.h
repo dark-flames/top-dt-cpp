@@ -14,11 +14,11 @@ public:
 
     Var(Lvl l, ValuePtr& spine) : l(l), spine(std::move(spine)) {}
 
-    ValueTy ty() override final {
+    ValueTy ty() final {
         return ValueTy::Var;
     }
 
-    ValuePtr copy() override final {
+    ValuePtr copy() final {
         return make_value_ptr<Var>(this->l, this->spine->copy());
     }
 };
@@ -49,11 +49,11 @@ public:
 
     App(ValuePtr& next, ValuePtr& parameter) : next(std::move(next)), parameter(std::move(parameter)) {}
 
-    ValueTy ty() override final {
+    ValueTy ty() final {
         return ValueTy::App;
     }
 
-    ValuePtr copy() override final {
+    ValuePtr copy() final {
         return make_value_ptr<App>(this->next->copy(), this->parameter->copy());
     }
 };

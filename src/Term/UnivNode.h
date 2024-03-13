@@ -14,24 +14,24 @@ public:
 
     explicit LVar(Idx i) : i(i) {}
 
-    TermTy ty() override final {
+    TermTy ty() final {
         return TermTy::LVar;
     }
 
-    TermPtr copy() override final {
+    TermPtr copy() final {
         return make_term_ptr<LVar>(this->i);
     }
 };
 
 class LZero : public Term {
 public:
-    LZero() {}
+    LZero() = default;
 
-    TermTy ty() override final {
+    TermTy ty() final {
         return TermTy::LZero;
     }
 
-    TermPtr copy() override final {
+    TermPtr copy() final {
         return make_term_ptr<LZero>();
     }
 };
@@ -42,11 +42,11 @@ public:
 
     explicit LSuc(TermPtr& level) : level(std::move(level)) {}
 
-    TermTy ty() override final {
+    TermTy ty() final {
         return TermTy::LSuc;
     }
 
-    TermPtr copy() override final {
+    TermPtr copy() final {
         return make_term_ptr<LSuc>(this->level->copy());
     }
 };
@@ -58,11 +58,11 @@ public:
 
     LMax(TermPtr& l, TermPtr& r) : l(std::move(l)), r(std::move(r)) {}
 
-    TermTy ty() override final {
+    TermTy ty() final {
         return TermTy::LMax;
     }
 
-    TermPtr copy() override final {
+    TermPtr copy() final {
         return make_term_ptr<LMax>(this->l->copy(), this->r->copy());
     }
 };
@@ -73,22 +73,22 @@ public:
 
     explicit Univ(TermPtr& l) : level(std::move(l)){}
 
-    TermTy ty() override final {
+    TermTy ty() final {
         return TermTy::Univ;
     }
 
-    TermPtr copy() override final {
+    TermPtr copy() final {
         return make_term_ptr<Univ>(this->level->copy());
     }
 };
 
 class UnivOmega : public Term {
 public:
-    TermTy ty() override final {
+    TermTy ty() final {
         return TermTy::UnivOmega;
     }
 
-    TermPtr copy() override final {
+    TermPtr copy() final {
         return make_term_ptr<UnivOmega>();
     }
 };

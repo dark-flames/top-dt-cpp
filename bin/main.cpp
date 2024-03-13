@@ -1,3 +1,4 @@
+#include <syntax.h>
 #include <term.h>
 #include <normalize.h>
 #include <pretty.h>

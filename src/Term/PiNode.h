@@ -31,11 +31,11 @@ public:
 
     LLambda(std::string& name, TermPtr& body) : name(name), body(std::move(body)) {}
 
-    TermTy ty() override final {
+    TermTy ty() final {
         return TermTy::LLambda;
     }
 
-    TermPtr copy() override final {
+    TermPtr copy() final {
         return make_term_ptr<LLambda>(this->name, this->body->copy());
     }
 };
@@ -48,11 +48,11 @@ public:
 
     App(TermPtr& fun, TermPtr& param) : fun(std::move(fun)), param(std::move(param)) {}
 
-    TermTy ty() override final {
+    TermTy ty() final {
         return TermTy::App;
     }
 
-    TermPtr copy() override final {
+    TermPtr copy() final {
         return make_term_ptr<App>(this->fun->copy(), this->param->copy());
     }
 };
@@ -69,11 +69,11 @@ public:
         domain(std::move(domain)),
         codomain(std::move(codomain)) {}
 
-    TermTy ty() override final {
+    TermTy ty() final {
         return TermTy::Pi;
     }
 
-    TermPtr copy() override final {
+    TermPtr copy() final {
         return make_term_ptr<Pi>(
             this->name,
             this->domain->copy(),
@@ -89,11 +89,11 @@ public:
 
     LPi(std::string& name, TermPtr& codomain) : name(name), codomain(std::move(codomain)) {}
 
-    TermTy ty() override final {
+    TermTy ty() final {
         return TermTy::LPi;
     }
 
-    TermPtr copy() override final {
+    TermPtr copy() final {
         return make_term_ptr<LPi>(this->name, this->codomain->copy());
     }
 };

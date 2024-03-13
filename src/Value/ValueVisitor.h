@@ -15,7 +15,7 @@ namespace value {
 template<typename R>
 class ValueVisitor : public Visitor<Value, R> {
 public:
-    virtual R visit(Value& value) override final {
+    virtual R visit(Value& value) final {
         auto ptr = &value;
         switch (value.ty()) {
 #define DEF_CASE(TYPE, METHOD) \

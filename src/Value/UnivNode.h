@@ -7,8 +7,6 @@
 
 namespace value {
 
-using MetaNat = unsigned int;
-
 class Level : public Value {
 public:
     std::map<Lvl, MetaNat> m;
@@ -18,11 +16,11 @@ public:
 
     explicit Level(MetaNat pure) : pure(pure) {}
 
-    ValueTy ty() override final {
+    ValueTy ty() final {
         return ValueTy::Level;
     }
 
-    ValuePtr copy() override final {
+    ValuePtr copy() final {
         return make_value_ptr<Level>(this->m, this->pure);
     }
 };
@@ -31,13 +29,13 @@ class Univ : public Value {
 public:
     ValuePtr level;
 
-    explicit Univ(ValuePtr& l) : level(std::move(l)) {}
+    Univ(ValuePtr& l) : level(std::move(l)) {}
 
-    ValueTy ty() override final {
+    ValueTy ty() final {
         return ValueTy::Univ;
     }
 
-    ValuePtr copy() override final {
+    ValuePtr copy() final {
         return make_value_ptr<Univ>(this->level->copy());
     }
 };
@@ -45,11 +43,11 @@ public:
 class UnivOmega : public Value {
 public:
     UnivOmega() {}
-    ValueTy ty() override final {
+    ValueTy ty() final {
         return ValueTy::UnivOmega;
     }
 
-    ValuePtr copy() override final {
+    ValuePtr copy() final {
         return make_value_ptr<UnivOmega>();
     }
 };

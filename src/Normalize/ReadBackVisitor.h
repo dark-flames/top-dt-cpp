@@ -19,21 +19,21 @@ private:
     ReadBackStatePtr state;
     EvalVisitor evaluator;
 protected:
-    TermPtr visit_var(value::Var& node) override final;
+    TermPtr visit_var(value::Var& node) final;
 
-    TermPtr visit_lambda(value::Lambda& node) override final;
+    TermPtr visit_lambda(value::Lambda& node) final;
 
-    TermPtr visit_llambda(value::LLambda& node) override final;
+    TermPtr visit_llambda(value::LLambda& node) final;
 
-    TermPtr visit_pi(value::Pi& node) override final;
+    TermPtr visit_pi(value::Pi& node) final;
 
-    TermPtr visit_lpi(value::LPi& node) override final;
+    TermPtr visit_lpi(value::LPi& node) final;
 
-    TermPtr visit_level(value::Level& node) override final;
+    TermPtr visit_level(value::Level& node) final;
 
-    TermPtr visit_univ(value::Univ& node) override final;
+    TermPtr visit_univ(value::Univ& node) final;
 
-    TermPtr visit_univ_omega(value::UnivOmega& node) override final;
+    TermPtr visit_univ_omega(value::UnivOmega& node) final;
 
 public:
     ReadBackVisitor(

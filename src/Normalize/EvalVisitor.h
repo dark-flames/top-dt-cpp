@@ -20,29 +20,29 @@ private:
 
     Environment bind(bool is_level = false);
 protected:
-    ValuePtr visit_lmax(term::LMax& node) override final;
+    ValuePtr visit_lmax(term::LMax& node) final;
 
-    ValuePtr visit_lambda(term::Lambda& node) override final;
+    ValuePtr visit_lambda(term::Lambda& node) final;
 
-    ValuePtr visit_llambda(term::LLambda& node) override final;
+    ValuePtr visit_llambda(term::LLambda& node) final;
 
-    ValuePtr visit_pi(term::Pi& node) override final;
+    ValuePtr visit_pi(term::Pi& node) final;
 
-    ValuePtr visit_univ(term::Univ& node) override final;
+    ValuePtr visit_univ(term::Univ& node) final;
 
-    ValuePtr visit_lzero(term::LZero& node) override final;
+    ValuePtr visit_lzero(term::LZero& node) final;
 
-    ValuePtr visit_univ_omega(term::UnivOmega& node) override final;
+    ValuePtr visit_univ_omega(term::UnivOmega& node) final;
 
-    ValuePtr visit_lvar(term::LVar& node) override final;
+    ValuePtr visit_lvar(term::LVar& node) final;
 
-    ValuePtr visit_app(term::App& node) override final;
+    ValuePtr visit_app(term::App& node) final;
 
-    ValuePtr visit_lpi(term::LPi& node) override final;
+    ValuePtr visit_lpi(term::LPi& node) final;
 
-    ValuePtr visit_var(term::Var& node) override final;
+    ValuePtr visit_var(term::Var& node) final;
 
-    ValuePtr visit_lsuc(term::LSuc& node) override final;
+    ValuePtr visit_lsuc(term::LSuc& node) final;
 public:
     ValuePtr bind_in_place(bool is_level = false) {
         this->env = this->bind(is_level);

@@ -17,11 +17,11 @@ public:
 
     Lambda(std::string& name, Closure& body) : name(name), body(std::move(body)) {}
 
-    ValueTy ty() override final {
+    ValueTy ty() final {
         return ValueTy::Lambda;
     }
 
-    ValuePtr copy() override final {
+    ValuePtr copy() final {
         return make_value_ptr<Lambda>(this->name, this->body);
     }
 };
@@ -33,11 +33,11 @@ public:
 
     LLambda(std::string& name, Closure& body) : name(name), body(std::move(body)) {}
 
-    ValueTy ty() override final {
+    ValueTy ty() final {
         return ValueTy::LLambda;
     }
 
-    ValuePtr copy() override final {
+    ValuePtr copy() final {
         return make_value_ptr<LLambda>(this->name, this->body);
     }
 };
@@ -55,11 +55,11 @@ public:
         Closure & codomain
     ) : name(name), domain(std::move(domain)), codomain(std::move(codomain)) {}
 
-    ValueTy ty() override final {
+    ValueTy ty() final {
         return ValueTy::Pi;
     }
 
-    ValuePtr copy() override final {
+    ValuePtr copy() final {
         return make_value_ptr<Pi>(this->name, this->domain->copy(), this->codomain);
     }
 };
@@ -71,11 +71,11 @@ public:
 
     LPi(std::string& name,Closure & codomain) : name(name), codomain(std::move(codomain)) {}
 
-    ValueTy ty() override final {
+    ValueTy ty() final {
         return ValueTy::LPi;
     }
 
-    ValuePtr copy() override final {
+    ValuePtr copy() final {
         return make_value_ptr<LPi>(this->name, this->codomain);
     }
 };
