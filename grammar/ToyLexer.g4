@@ -1,4 +1,4 @@
-lexer grammar Lexer;
+lexer grammar ToyLexer;
 
 fragment NewLine: ('\r'? '\n' | '\r');
 fragment Tab: '\t';

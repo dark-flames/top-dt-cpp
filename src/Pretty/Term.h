@@ -40,21 +40,21 @@ private:
 
     LevelPrettyPrinter create_level_printer();
 protected:
-    void visit_var(term::Var& target) final;
+    void visit_var(term::Var& target) override final;
 
-    void visit_lambda(term::Lambda& node) final;
+    void visit_lambda(term::Lambda& node) override final;
 
-    void visit_llambda(term::LLambda& node) final;
+    void visit_llambda(term::LLambda& node) override final;
 
-    void visit_app(term::App& node) final;
+    void visit_app(term::App& node) override final;
 
-    void visit_pi(term::Pi& node) final;
+    void visit_pi(term::Pi& node) override final;
 
-    void visit_lpi(term::LPi& node) final;
+    void visit_lpi(term::LPi& node) override final;
 
-    void visit_univ(term::Univ& node) final;
+    void visit_univ(term::Univ& node) override final;
 
-    void visit_univ_omega(term::UnivOmega& node) final;
+    void visit_univ_omega(term::UnivOmega& node) override final;
 
 public:
     explicit TermPrettyPrinter(StatePtr& s) {

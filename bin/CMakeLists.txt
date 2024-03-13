@@ -6,5 +6,7 @@ foreach (module ${module_list})
     target_link_libraries(bin PUBLIC ${module})
 endforeach ()
 
+#target_link_libraries(bin PUBLIC parser)
+
 set_property(TARGET bin PROPERTY CXX_STANDARD 20)
 set_property(TARGET bin PROPERTY CXX_STANDARD_REQUIRED On)

@@ -15,7 +15,7 @@ namespace term {
 template<typename R>
 class TermVisitor : public Visitor<Term, R> {
 public:
-    virtual R visit(Term& term) {
+    virtual R visit(Term& term) override final {
         auto ptr = &term;
         switch (term.ty()) {
 #define DEF_CASE(TYPE, METHOD) \

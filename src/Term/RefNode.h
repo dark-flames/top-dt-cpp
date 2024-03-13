@@ -14,11 +14,11 @@ public:
 
     explicit Var(Idx i) : i(i) {}
 
-    TermTy ty() final {
+    TermTy ty() override final {
         return TermTy::Var;
     }
 
-    TermPtr copy() override {
+    TermPtr copy() override final {
         return make_term_ptr<Var>(this->i);
     }
 };

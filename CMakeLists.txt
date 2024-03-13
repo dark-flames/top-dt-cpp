@@ -21,7 +21,13 @@ endif()
 
 set(module_list)
 
+#include_directories(/usr/local/include/antlr4-runtime)
+#link_directories(/usr/local/lib)
+
+#add_subdirectory(grammar)
+
 include_directories(src)
+include_directories(grammar)
 
 add_subdirectory(src)
 add_subdirectory(bin)

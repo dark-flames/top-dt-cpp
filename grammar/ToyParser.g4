@@ -1,7 +1,7 @@
-parser grammar Parser;
+parser grammar ToyParser;
 
 options {
-    tokenVocab = Lexer; // 引用词法分析器
+    tokenVocab = ToyLexer;
 }
 
 program : declaration* EOF;
