@@ -34,7 +34,7 @@ private:
 
     TermPrettyPrinter& pop_name();
 
-    std::string get_name(term::Idx i) const;
+    std::string get_name(DBIndex i) const;
 
     BlockPtr sub_pretty(Term& term);
 
@@ -73,11 +73,11 @@ public:
 
     static BlockPtr pretty_inline(TermPtr& term) {
         auto state = std::make_shared<TermPrettyPrinterState>();
-        auto printer = new TermPrettyPrinter(state);
+        auto printer = TermPrettyPrinter(state);
 
-        printer->visit(*term);
+        printer.visit(*term);
 
-        return std::move(printer->result);
+        return std::move(printer.result);
     }
 
     friend class LevelPrettyPrinter;

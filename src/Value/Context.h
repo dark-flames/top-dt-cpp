@@ -22,19 +22,19 @@ public:
         return 0;
     }
 
-    virtual std::optional<ValueWithSize> find(Identifier& ref) const {
+    virtual std::optional<ValueWithSize> find(Id& ref) const {
         return {};
     }
 
-    virtual std::optional<ValueWithSize> find(Idx index) const {
+    virtual std::optional<ValueWithSize> find(DBIndex index) const {
         return {};
     }
 
-    virtual std::optional<Size> find_level(Identifier& ref) const {
+    virtual std::optional<Size> find_level(Id& ref) const {
         return {};
     }
 
-    virtual std::optional<Size> find_level(Idx index) const {
+    virtual std::optional<Size> find_level(DBIndex index) const {
         return {};
     }
 
@@ -47,13 +47,13 @@ class ContextConsNode : public ContextNode {
 private:
     ContextNodePtr prev;
     Size count;
-    Identifier name;
+    Id name;
     VTyPtr ty;
 public:
-    ContextConsNode(ContextNodePtr& prev, VTyPtr& ty, Identifier& name) :
+    ContextConsNode(ContextNodePtr& prev, VTyPtr& ty, Id& name) :
         prev(prev), count(prev->size() + 1), name(name), ty(std::move(ty)) {}
 
-    Size size() const final {
+    [[nodiscard]] Size size() const final {
         return this->count;
     }
 
@@ -61,13 +61,13 @@ public:
         return this->prev;
     }
 
-    virtual std::optional<ValueWithSize> find(Identifier& ref) const final;
+    virtual std::optional<ValueWithSize> find(Id& ref) const final;
 
-    virtual std::optional<ValueWithSize> find(Idx index) const final;
+    virtual std::optional<ValueWithSize> find(DBIndex index) const final;
 
-    virtual std::optional<Size> find_level(Identifier& ref) const final;
+    virtual std::optional<Size> find_level(Id& ref) const final;
 
-    virtual std::optional<Size> find_level(Idx index) const final;
+    virtual std::optional<Size> find_level(DBIndex index) const final;
 
     friend class Context;
 };
@@ -78,7 +78,7 @@ private:
     Size count;
     std::string name;
 public:
-    ContextConsLevelNode(ContextNodePtr& prev, Identifier& name) :
+    ContextConsLevelNode(ContextNodePtr& prev, Id& name) :
         prev(prev), count(prev->size() + 1), name(name) {}
 
     Size size() const final {
@@ -89,18 +89,18 @@ public:
         return this->prev;
     }
 
-    virtual std::optional<ValueWithSize> find(Identifier& ref) const final;
+    virtual std::optional<ValueWithSize> find(Id& ref) const final;
 
-    virtual std::optional<ValueWithSize> find(Idx index) const final;
+    virtual std::optional<ValueWithSize> find(DBIndex index) const final;
 
-    virtual std::optional<Size> find_level(Identifier& ref) const final;
+    virtual std::optional<Size> find_level(Id& ref) const final;
 
-    virtual std::optional<Size> find_level(Idx index) const final;
+    virtual std::optional<Size> find_level(DBIndex index) const final;
 
     friend class Context;
 };
 
-using VTyWithIndex = std::pair<VTyPtr, Idx>;
+using VTyWithIndex = std::pair<VTyPtr, DBIndex>;
 
 /**
  * The any instance of the class environment contains a path on the overall context tree.
@@ -124,14 +124,14 @@ public:
     std::optional<VTyWithIndex> find(T& index) const;
 
     template<class T>
-    std::optional<Idx> find_level(T& index) const;
+    std::optional<DBIndex> find_level(T& index) const;
 
     /**
      * This function will now affect *this, but just return the new environment.
      */
-    Context push(Identifier& name, VTyPtr& vty);
+    Context push(Id& name, VTyPtr& vty);
 
-    Context push_level(Identifier& name);
+    Context push_level(Id& name);
 
     Context pop();
 };

@@ -8,6 +8,8 @@
 #include <stdexcept>
 
 enum class DeclarationState : int {
+    UncheckedSignature,
+    UncheckedBody,
     Unchecked,
     SignatureOnly,
     Finished,
@@ -15,6 +17,8 @@ enum class DeclarationState : int {
 
 class Declaration {
 public:
+    Declaration() {}
+
     virtual DeclarationState state() {
         throw std::runtime_error("Cannot call status() on the base class `Syntax`");
     }

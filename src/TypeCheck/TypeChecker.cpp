@@ -3,7 +3,7 @@
 using namespace std;
 
 
-ValuePtr TypeChecker::bind(Identifier& name, VTyPtr ty) {
+ValuePtr TypeChecker::bind(Id& name, VTyPtr ty) {
     auto new_ctx = context.push(name, ty);
     this->context = new_ctx;
     auto v = eval_visitor.bind_in_place(false);
@@ -11,7 +11,7 @@ ValuePtr TypeChecker::bind(Identifier& name, VTyPtr ty) {
     return v;
 }
 
-ValuePtr TypeChecker::bind_level(Identifier& name) {
+ValuePtr TypeChecker::bind_level(Id& name) {
     auto new_ctx = context.push_level(name);
     this->context = new_ctx;
     auto v = eval_visitor.bind_in_place(true);
@@ -25,7 +25,7 @@ void TypeChecker::pop() {
     auto v = eval_visitor.pop_variable();
 }
 
-TermAndType TypeChecker::find_ref(Identifier& name) {
+TermAndType TypeChecker::find_ref(Id& name) {
     auto context_ref = this->context.find(name);
 
     if (context_ref.has_value()) {
@@ -47,7 +47,7 @@ TermAndType TypeChecker::find_ref(Identifier& name) {
     }
 }
 
-TermPtr TypeChecker::find_level_ref(Identifier& name) {
+TermPtr TypeChecker::find_level_ref(Id& name) {
     auto context_ref = this->context.find_level(name);
 
     if (context_ref.has_value()) {

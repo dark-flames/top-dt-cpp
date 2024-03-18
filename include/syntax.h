@@ -4,3 +4,4 @@
 #include <Syntax/PiNode.h>
 #include <Syntax/UnivNode.h>
 #include <Syntax/SyntaxVisitor.h>
+#include <Syntax/Helper.h>

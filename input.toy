@@ -1,0 +1,2 @@
+Nat : (l : Level) -> Univ l + 1
+Nat l = (A : Univ l) -> (z : A) -> (s : A -> A) -> A

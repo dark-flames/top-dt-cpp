@@ -31,7 +31,24 @@ public:
 
     ImpossibleException(std::string& msg) : msg(msg) {}
 
+    ImpossibleException(const std::string& msg) : msg(msg) {}
+
     const char* what() const throw() {
         return "ImpossibleException";
+    }
+};
+
+class ParseException : public Exception {
+private:
+
+public:
+    std::string msg;
+
+    ParseException(std::string& msg) : msg(msg) {}
+
+    ParseException(const std::string& msg) : msg(msg) {}
+
+    const char* what() const throw() {
+        return "ParseException";
     }
 };

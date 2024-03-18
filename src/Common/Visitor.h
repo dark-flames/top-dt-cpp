@@ -13,6 +13,3 @@ public:
         throw std::runtime_error("Implement visit method.");
     }
 };
-
-using MetaNat = unsigned int;
-using Size = unsigned int;

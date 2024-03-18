@@ -15,11 +15,11 @@ using EnvNodePtr = std::shared_ptr<EnvNode>;
 
 class EnvNode {
 public:
-    virtual unsigned int size() const {
+    virtual Size size() const {
         return 0;
     }
 
-    virtual ValuePtr find(term::Idx l) const {
+    virtual ValuePtr find(DBIndex l) const {
         throw std::runtime_error("cannot find level.");
     }
 
@@ -35,17 +35,17 @@ public:
 class EnvConsNode : public EnvNode {
 private:
     EnvNodePtr prev;
-    unsigned int count;
+    Size count;
     ValuePtr value;
 public:
     EnvConsNode(EnvNodePtr& prev, ValuePtr& value) :
         prev(prev), value(std::move(value)), count(prev->size() + 1) {}
 
-    virtual unsigned int size() const {
+    virtual Size size() const {
         return this->count;
     }
 
-    ValuePtr find(term::Idx l) const final {
+    ValuePtr find(DBIndex l) const final {
         if (l == 0) {
             return this->value->copy();
         } else {
@@ -79,11 +79,11 @@ public:
         this->tail = std::make_shared<EnvNode>();
     }
 
-    ValuePtr find(term::Idx l) const {
+    ValuePtr find(DBIndex l) const {
         return this->tail->find(l);
     }
 
-    unsigned int size() const {
+    Size size() const {
         return this->tail->size();
     }
 

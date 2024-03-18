@@ -10,19 +10,19 @@
 #include <utility>
 
 namespace term {
-inline TermPtr var(Idx i) {
+inline TermPtr var(DBIndex i) {
     return make_term_ptr<Var>(i);
 }
 
-inline TermPtr def_ref(std::string entry) {
+inline TermPtr def_ref(Id entry) {
     return make_term_ptr<DefRef>(entry);
 }
 
-inline TermPtr lambda(std::string n, TermPtr b) {
+inline TermPtr lambda(Id n, TermPtr b) {
     return make_term_ptr<Lambda>(n, b);
 }
 
-inline TermPtr abs(std::vector<std::string>&& v, TermPtr core) {
+inline TermPtr abs(std::vector<Id>&& v, TermPtr core) {
     for (auto it = v.rbegin(); it != v.rend(); ++it) {
         core = lambda(*it, std::move(core));
     }
@@ -30,11 +30,11 @@ inline TermPtr abs(std::vector<std::string>&& v, TermPtr core) {
     return core;
 }
 
-inline TermPtr l_lambda(std::string n, TermPtr b) {
+inline TermPtr l_lambda(Id n, TermPtr b) {
     return make_term_ptr<LLambda>(n, b);
 }
 
-inline TermPtr l_abs(std::vector<std::string>&& v, TermPtr core) {
+inline TermPtr l_abs(std::vector<Id>&& v, TermPtr core) {
     for (auto it = v.rbegin(); it != v.rend(); ++it) {
         core = l_lambda(*it, std::move(core));
     }
@@ -54,7 +54,7 @@ inline TermPtr apps(TermPtr fun, std::vector<TermPtr>& params) {
     return fun;
 }
 
-inline TermPtr apps(TermPtr fun, std::vector<unsigned int>&& params) {
+inline TermPtr apps(TermPtr fun, std::vector<DBIndex>&& params) {
     for (auto p : params) {
         fun = app(std::move(fun), var(p));
     }
@@ -67,7 +67,7 @@ inline TermPtr pi(std::string n, TermPtr domain, TermPtr codomain) {
 }
 
 inline TermPtr forall(
-    std::vector<std::pair<std::string, TermPtr>> v,
+    std::vector<std::pair<Id, TermPtr>> v,
     TermPtr core
 ) {
     for (auto it = v.rbegin(); it != v.rend(); ++it) {
@@ -86,7 +86,7 @@ inline TermPtr l_pi(std::string n, TermPtr codomain) {
 }
 
 inline TermPtr l_forall(
-    std::vector<std::string>&& v,
+    std::vector<Id>&& v,
     TermPtr core
 ) {
     for (auto it = v.rbegin(); it != v.rend(); ++it) {
@@ -96,7 +96,7 @@ inline TermPtr l_forall(
     return core;
 }
 
-inline TermPtr l_var(Idx i) {
+inline TermPtr l_var(DBIndex i) {
     return make_term_ptr<LVar>(i);
 }
 
@@ -117,7 +117,7 @@ inline TermPtr l_plus_nat(TermPtr level, unsigned int l) {
     return level;
 }
 
-inline TermPtr l_nat(unsigned int l) {
+inline TermPtr l_nat(MetaNat l) {
     return l_plus_nat(l_zero(), l);
 }
 

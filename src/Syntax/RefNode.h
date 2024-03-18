@@ -1,20 +1,19 @@
 #pragma once
 
 #include <Common/Visitor.h>
+#include <Common/Types.h>
 #include <Syntax/Nodes.h>
 #include <Syntax/SyntaxNode.h>
 
 #include <memory>
 
-using Identifier = std::string;
-
 namespace syntax {
 
 class Ref : public Syntax {
 public:
-    Identifier name;
+    Id name;
 
-    Ref(Identifier& name) : name(name) {}
+    Ref(Id& name) : name(name) {}
 
     SyntaxTy ty() final {
         return SyntaxTy::Ref;

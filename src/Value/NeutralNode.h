@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Common/Visitor.h>
+#include <Common/Types.h>
 #include <Value/Nodes.h>
 #include <Value/ValueNode.h>
 
@@ -9,10 +10,10 @@
 namespace value {
 class Var : public Value {
 public:
-    Lvl l;
+    DBLevel l;
     ValuePtr spine;
 
-    Var(Lvl l, ValuePtr& spine) : l(l), spine(std::move(spine)) {}
+    Var(DBLevel l, ValuePtr& spine) : l(l), spine(std::move(spine)) {}
 
     ValueTy ty() final {
         return ValueTy::Var;

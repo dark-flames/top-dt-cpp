@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Common/Visitor.h>
+#include <Common/Types.h>
 #include <Term/Nodes.h>
 #include <Term/TermNode.h>
 
@@ -11,9 +12,9 @@ namespace term {
 
 class Var : public Term {
 public:
-    Idx i;
+    DBIndex i;
 
-    explicit Var(Idx i) : i(i) {}
+    explicit Var(DBIndex i) : i(i) {}
 
     TermTy ty() final {
         return TermTy::Var;
@@ -26,9 +27,9 @@ public:
 
 class DefRef : public Term {
 public:
-    std::string entry;
+    Id entry;
 
-    explicit DefRef(std::string entry) : entry(entry) {}
+    explicit DefRef(Id entry) : entry(entry) {}
 
     TermTy ty() final {
         return TermTy::DefRef;

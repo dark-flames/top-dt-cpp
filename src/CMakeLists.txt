@@ -18,6 +18,8 @@ macro(add_object_library name common_path)
     target_link_libraries(${name} PRIVATE -Wl,--unresolved-symbols=ignore-all)
 endmacro()
 
+add_subdirectory(Parser)
+
 add_object_library(common Common)
 add_object_library(syntax Syntax)
 add_object_library(term Term)

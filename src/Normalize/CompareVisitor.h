@@ -17,7 +17,7 @@ private:
     Value* rhs_value;
     EvalVisitor* evaluator;
 
-    Equality try_rhs_eta_conv_or(value::Value& node, Equality equality);
+    Equality try_rhs_eta_conv_or(Value& node, Equality equality);
 
     Equality compare_as_lambda(
         value::Value& lhs,

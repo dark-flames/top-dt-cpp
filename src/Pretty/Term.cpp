@@ -15,20 +15,20 @@ TermPrettyPrinter& TermPrettyPrinter::pop_name() {
     return *this;
 }
 
-string TermPrettyPrinter::get_name(Idx i) const {
+string TermPrettyPrinter::get_name(DBIndex i) const {
     return this->state->name_stack.at(this->state->name_stack.size() - 1 - i);
 }
 
 BlockPtr TermPrettyPrinter::sub_pretty(Term& term) {
-    auto printer = new TermPrettyPrinter(this->state);
+    auto printer = TermPrettyPrinter(this->state);
 
-    printer->visit(term);
+    printer.visit(term);
 
     if (this->state->block_tabs) {
-        printer->result->tab();
+        printer.result->tab();
     }
 
-    return std::move(printer->result);
+    return std::move(printer.result);
 }
 
 LevelPrettyPrinter TermPrettyPrinter::create_level_printer() {

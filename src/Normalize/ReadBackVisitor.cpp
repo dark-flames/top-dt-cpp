@@ -2,7 +2,7 @@
 
 using namespace std;
 
-term::Idx level_to_index(unsigned int c, value::Lvl l) {
+DBIndex level_to_index(unsigned int c, DBLevel l) {
     return c - l - 1;
 }
 

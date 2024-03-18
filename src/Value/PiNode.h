@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Common/Visitor.h>
+#include <Common/Types.h>
 #include <Value/Nodes.h>
 #include <Value/ValueNode.h>
 #include <Value/Closure.h>
@@ -12,10 +13,10 @@ namespace value {
 
 class Lambda : public Value {
 public:
-    std::string name;
+    Id name;
     Closure body;
 
-    Lambda(std::string& name, Closure& body) : name(name), body(std::move(body)) {}
+    Lambda(Id& name, Closure& body) : name(name), body(std::move(body)) {}
 
     ValueTy ty() final {
         return ValueTy::Lambda;
@@ -28,10 +29,10 @@ public:
 
 class LLambda : public Value {
 public:
-    std::string name;
+    Id name;
     Closure body;
 
-    LLambda(std::string& name, Closure& body) : name(name), body(std::move(body)) {}
+    LLambda(Id& name, Closure& body) : name(name), body(std::move(body)) {}
 
     ValueTy ty() final {
         return ValueTy::LLambda;
@@ -45,12 +46,12 @@ public:
 //pi typeb
 class Pi : public Value {
 public:
-    std::string name;
+    Id name;
     ValuePtr domain;
     Closure codomain;
 
     Pi(
-        std::string& name,
+        Id& name,
         ValuePtr& domain,
         Closure& codomain
     ) : name(name), domain(std::move(domain)), codomain(std::move(codomain)) {}
@@ -66,10 +67,10 @@ public:
 
 class LPi : public Value {
 public:
-    std::string name;
+    Id name;
     Closure codomain;
 
-    LPi(std::string& name, Closure& codomain) : name(name), codomain(std::move(codomain)) {}
+    LPi(Id& name, Closure& codomain) : name(name), codomain(std::move(codomain)) {}
 
     ValueTy ty() final {
         return ValueTy::LPi;

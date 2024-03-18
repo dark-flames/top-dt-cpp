@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Common/Visitor.h>
+#include <Common/Types.h>
 #include <Value/Nodes.h>
 #include <Value/ValueNode.h>
 #include <map>
@@ -9,10 +10,10 @@ namespace value {
 
 class Level : public Value {
 public:
-    std::map<Lvl, MetaNat> m;
+    std::map<DBLevel, MetaNat> m;
     MetaNat pure;
 
-    Level(std::map<Lvl, MetaNat>& m, MetaNat pure) : m(m), pure(pure) {}
+    Level(std::map<DBLevel, MetaNat>& m, MetaNat pure) : m(m), pure(pure) {}
 
     explicit Level(MetaNat pure) : pure(pure) {}
 

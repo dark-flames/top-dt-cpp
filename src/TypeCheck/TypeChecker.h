@@ -20,15 +20,15 @@ private:
     ExprTypeInferVisitor infer_visitor;
     LevelCheckVisitor level_visitor;
 public:
-    ValuePtr bind(Identifier& name, VTyPtr ty);
+    ValuePtr bind(Id& name, VTyPtr ty);
 
-    ValuePtr bind_level(Identifier& name);
+    ValuePtr bind_level(Id& name);
 
     void pop();
 
-    TermAndType find_ref(Identifier& name);
+    TermAndType find_ref(Id& name);
 
-    TermPtr find_level_ref(Identifier& name);
+    TermPtr find_level_ref(Id& name);
 
     ValuePtr eval_closure(Closure& closure, ValuePtr v);
 

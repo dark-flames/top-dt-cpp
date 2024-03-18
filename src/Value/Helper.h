@@ -14,7 +14,7 @@ inline ValuePtr empty_spine() {
     return make_value_ptr<Spine>();
 }
 
-inline ValuePtr var(Lvl l) {
+inline ValuePtr var(DBLevel l) {
     return make_value_ptr<Var>(l, empty_spine());
 }
 
@@ -31,19 +31,19 @@ inline ValuePtr neutral_app(ValuePtr s, ValuePtr p) {
     }
 }
 
-inline ValuePtr lambda(std::string& name, Closure body) {
+inline ValuePtr lambda(Id& name, Closure body) {
     return make_value_ptr<Lambda>(name, body);
 }
 
-inline ValuePtr l_lambda(std::string& name, Closure body) {
+inline ValuePtr l_lambda(Id& name, Closure body) {
     return make_value_ptr<LLambda>(name, body);
 }
 
-inline ValuePtr pi(std::string& name, ValuePtr domain, Closure codomain) {
+inline ValuePtr pi(Id& name, ValuePtr domain, Closure codomain) {
     return make_value_ptr<Pi>(name, domain, codomain);
 }
 
-inline ValuePtr l_pi(std::string& name, Closure codomain) {
+inline ValuePtr l_pi(Id& name, Closure codomain) {
     return make_value_ptr<LPi>(name, codomain);
 }
 
@@ -51,15 +51,15 @@ inline ValuePtr l_nat(MetaNat l) {
     return make_value_ptr<Level>(l);
 }
 
-inline ValuePtr l_incr(ValuePtr l, Lvl c) {
+inline ValuePtr l_incr(ValuePtr l, DBLevel c) {
     auto level = static_cast<Level*>(l.get());
     level->pure += c;
 
     return l;
 }
 
-inline ValuePtr l_var(Lvl l) {
-    std::map<Lvl, MetaNat> m;
+inline ValuePtr l_var(DBLevel l) {
+    std::map<DBLevel, MetaNat> m;
     m[l] = 0;
 
     return make_value_ptr<Level>(m, 0);

@@ -3,8 +3,6 @@
 #include <Common/Visitor.h>
 
 namespace value {
-using Lvl = unsigned int;
-
 #define FOR_VALUE_TYPES(E) \
     E(Var, var)            \
     E(Lambda, lambda)      \
@@ -30,6 +28,4 @@ enum class ValueTy : int {
 };
 
 }
-
-using value::Lvl;
 using value::ValueTy;

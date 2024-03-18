@@ -3,7 +3,6 @@
 #include <Common/Visitor.h>
 
 namespace term {
-using Idx = unsigned int;
 
 #define FOR_TERM_TYPES(E) \
     E(Var, var)           \
@@ -45,6 +44,4 @@ inline bool is_level_term(TermTy ty) {
     }
 }
 }
-
-using term::Idx;
 using term::TermTy;

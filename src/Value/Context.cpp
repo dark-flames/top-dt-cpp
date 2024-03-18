@@ -3,7 +3,7 @@
 
 using namespace std;
 
-optional<ValueWithSize> ContextConsNode::find(Identifier& ref) const {
+optional<ValueWithSize> ContextConsNode::find(Id& ref) const {
     if (this->name == name) {
         return make_pair(this->ty->copy(), this->count);
     } else {
@@ -11,7 +11,7 @@ optional<ValueWithSize> ContextConsNode::find(Identifier& ref) const {
     }
 }
 
-optional<ValueWithSize> ContextConsNode::find(Idx index) const {
+optional<ValueWithSize> ContextConsNode::find(DBIndex index) const {
     if (index == 0) {
         return make_pair(this->ty->copy(), this->count);
     } else {
@@ -19,7 +19,7 @@ optional<ValueWithSize> ContextConsNode::find(Idx index) const {
     }
 }
 
-optional<Size> ContextConsNode::find_level(Identifier& ref) const {
+optional<Size> ContextConsNode::find_level(Id& ref) const {
     if (this->name == name) {
         throw ContextFoundNonLevel(*this->ty);
     } else {
@@ -27,7 +27,7 @@ optional<Size> ContextConsNode::find_level(Identifier& ref) const {
     }
 }
 
-optional<Size> ContextConsNode::find_level(Idx index) const {
+optional<Size> ContextConsNode::find_level(DBIndex index) const {
     if (index == 0) {
         throw ContextFoundNonLevel(*this->ty);
     } else {
@@ -35,7 +35,7 @@ optional<Size> ContextConsNode::find_level(Idx index) const {
     }
 }
 
-optional<ValueWithSize> ContextConsLevelNode::find(Identifier& ref) const {
+optional<ValueWithSize> ContextConsLevelNode::find(Id& ref) const {
     if (this->name == name) {
         throw ContextFoundLevel();
     } else {
@@ -43,7 +43,7 @@ optional<ValueWithSize> ContextConsLevelNode::find(Identifier& ref) const {
     }
 }
 
-optional<ValueWithSize> ContextConsLevelNode::find(Idx index) const {
+optional<ValueWithSize> ContextConsLevelNode::find(DBIndex index) const {
     if (index == 0) {
         throw ContextFoundLevel();
     } else {
@@ -51,7 +51,7 @@ optional<ValueWithSize> ContextConsLevelNode::find(Idx index) const {
     }
 }
 
-optional<Size> ContextConsLevelNode::find_level(Identifier& ref) const {
+optional<Size> ContextConsLevelNode::find_level(Id& ref) const {
     if (this->name == name) {
         return this->count;
     } else {
@@ -59,7 +59,7 @@ optional<Size> ContextConsLevelNode::find_level(Identifier& ref) const {
     }
 }
 
-optional<Size> ContextConsLevelNode::find_level(Idx index) const {
+optional<Size> ContextConsLevelNode::find_level(DBIndex index) const {
     if (index == 0) {
         return this->count;
     } else {
@@ -71,7 +71,7 @@ template<class T>
 optional<VTyWithIndex> Context::find(T& index) const {
     auto res = this->tail->find(index);
     if (res.has_value()) {
-        std::pair<ValuePtr, Idx> r = std::make_pair(
+        std::pair<ValuePtr, DBIndex> r = std::make_pair(
             std::move(res.value().first),
             this->size() - res.value().second
         );
@@ -82,7 +82,7 @@ optional<VTyWithIndex> Context::find(T& index) const {
 }
 
 template<class T>
-std::optional<Idx> Context::find_level(T& index) const {
+std::optional<DBIndex> Context::find_level(T& index) const {
     auto res = this->tail->find_level(index);
     if (res.has_value()) {
         return this->size() - res.value();
@@ -91,14 +91,14 @@ std::optional<Idx> Context::find_level(T& index) const {
     }
 }
 
-Context Context::push(Identifier& name, VTyPtr& vty) {
+Context Context::push(Id& name, VTyPtr& vty) {
     auto ptr = make_shared<ContextConsNode>(this->tail, vty, name);
     auto new_tail = std::static_pointer_cast<ContextNode>(ptr);
 
     return Context(new_tail);
 }
 
-Context Context::push_level(Identifier& name) {
+Context Context::push_level(Id& name) {
     auto ptr = make_shared<ContextConsLevelNode>(this->tail, name);
     auto new_tail = std::static_pointer_cast<ContextNode>(ptr);
 

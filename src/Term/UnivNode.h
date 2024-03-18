@@ -10,9 +10,9 @@
 namespace term {
 class LVar : public Term {
 public:
-    Idx i;
+    DBIndex i;
 
-    explicit LVar(Idx i) : i(i) {}
+    explicit LVar(DBIndex i) : i(i) {}
 
     TermTy ty() final {
         return TermTy::LVar;

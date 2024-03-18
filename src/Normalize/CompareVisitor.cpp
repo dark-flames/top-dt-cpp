@@ -99,7 +99,7 @@ Equality CompareVisitor::visit_lpi(LPi& node) {
     }
 }
 
-bool compare_level_map(map<Lvl, MetaNat>& l, map<Lvl, MetaNat>& r) {
+bool compare_level_map(map < DBLevel, MetaNat > &l, map < DBLevel, MetaNat > &r) {
     for (auto& pair : l) {
         auto r_pair = r.find(pair.first);
         if (r_pair == r.end() || pair.second != r_pair->second) {
