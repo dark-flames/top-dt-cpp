@@ -30,12 +30,12 @@ inline ValuePtr make_value_ptr(Args&& ... args) {
 
 template<typename N>
 inline Value& generalize_value(N& v) {
-    return static_cast<Value&>(v);
+    return dynamic_cast<Value&>(v);
 }
 
 template<typename N>
 inline N& specialize_value(Value& v) {
-    return static_cast<N&>(v);
+    return dynamic_cast<N&>(v);
 }
 }
 

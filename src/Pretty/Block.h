@@ -31,11 +31,11 @@ private:
     std::vector<Line> lines;
     BlockWrapper wrapper;
     Indentation style;
-    unsigned int tabs;
+    int tabs;
 public:
     Block();
 
-    explicit Block(BlockWrapper w, Indentation s, unsigned int t);
+    explicit Block(BlockWrapper w, Indentation s, int t);
 
     Block& push(const std::string& token);
 
@@ -44,7 +44,7 @@ public:
     std::string format_with(
         const char* tab,
         const char* line,
-        unsigned int carried_tabs
+        int carried_tabs
     );
 
     std::string format_inline();
@@ -58,7 +58,7 @@ public:
         return *this;
     }
 
-    Block& tab(unsigned int c = 1) {
+    Block& tab(int c = 1) {
         this->tabs += c;
         return *this;
     }
@@ -109,7 +109,7 @@ public:
     std::string format_with(
         const char* tab,
         const char* line,
-        unsigned int tab_count
+        int tab_count
     );
 };
 

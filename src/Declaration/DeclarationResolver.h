@@ -17,7 +17,7 @@ private:
     Entry current_entry;
     std::map<Entry, DeclarationPtr> declarations;
     std::map<Entry, Entry> waiting_for;
-    TypeChecker* type_checker;
+    TypeChecker* type_checker{};
 
     Declaration* get_decl(Entry& entry);
 
@@ -27,8 +27,11 @@ private:
 
     CheckedDeclaration* try_check(Entry& entry);
 
+    DeclarationResolver& push_unchecked_body(UncheckedBody& body);
+
+    DeclarationResolver& push_unchecked_signature(UncheckedSignature& signature);
 public:
-    DeclarationResolver& push_unchecked(Entry& entry, UncheckedPtr& decl);
+    DeclarationResolver& push_unchecked(UncheckedPtr& decl);
 
     WithSignature* get_signature_or_waiting(Entry& entry);
 
@@ -36,6 +39,6 @@ public:
 
     DeclarationResolver() {}
 
-    DeclarationResolver(TypeChecker* type_checker)
+    explicit DeclarationResolver(TypeChecker* type_checker)
         : type_checker(type_checker) {}
 };

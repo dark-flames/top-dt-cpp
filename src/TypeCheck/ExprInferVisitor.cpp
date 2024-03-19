@@ -26,7 +26,7 @@ TermAndType ExprTypeInferVisitor::visit_app(syntax::App& node) {
     auto f_ty = std::move(f_res.second);
 
     if (f_ty->ty() == ValueTy::Pi) {
-        auto ty = static_cast<value::Pi*>(f_ty.get());
+        auto ty = dynamic_cast<value::Pi*>(f_ty.get());
 
         auto p_term = this->type_checker->check_expr(*node.param, ty->domain.get());
         auto p_value = this->type_checker->eval(*p_term);
@@ -37,7 +37,7 @@ TermAndType ExprTypeInferVisitor::visit_app(syntax::App& node) {
             std::move(res_ty)
         );
     } else if (f_ty->ty() == ValueTy::LPi) {
-        auto ty = static_cast<value::LPi*>(f_ty.get());
+        auto ty = dynamic_cast<value::LPi*>(f_ty.get());
 
         auto p_term = this->type_checker->check_level(*node.param);
         auto p_value = this->type_checker->eval(*p_term);

@@ -21,7 +21,7 @@ inline ValuePtr var(DBLevel l) {
 inline ValuePtr neutral_app(ValuePtr s, ValuePtr p) {
     auto ty = s->ty();
     if (ty == ValueTy::Var) {
-        auto s_var = static_cast<Var*>(s.get());
+        auto s_var = dynamic_cast<Var*>(s.get());
 
         s_var->spine = make_value_ptr<App>(std::move(s_var->spine), p);
 
@@ -52,7 +52,7 @@ inline ValuePtr l_nat(MetaNat l) {
 }
 
 inline ValuePtr l_incr(ValuePtr l, DBLevel c) {
-    auto level = static_cast<Level*>(l.get());
+    auto level = dynamic_cast<Level*>(l.get());
     level->pure += c;
 
     return l;
@@ -66,8 +66,8 @@ inline ValuePtr l_var(DBLevel l) {
 }
 
 inline ValuePtr l_max(ValuePtr l, ValuePtr r) {
-    auto l_level = static_cast<Level*>(l.get());
-    auto r_level = static_cast<Level*>(r.get());
+    auto l_level = dynamic_cast<Level*>(l.get());
+    auto r_level = dynamic_cast<Level*>(r.get());
 
     l_level->pure = std::max(l_level->pure, r_level->pure);
 

@@ -23,7 +23,7 @@ public:
     }
 
     ValuePtr copy() final {
-        return make_value_ptr<Lambda>(this->name, this->body);
+        return make_value_ptr<Lambda>(this->name, this->body.copy());
     }
 };
 
@@ -39,7 +39,7 @@ public:
     }
 
     ValuePtr copy() final {
-        return make_value_ptr<LLambda>(this->name, this->body);
+        return make_value_ptr<LLambda>(this->name, this->body.copy());
     }
 };
 
@@ -61,7 +61,7 @@ public:
     }
 
     ValuePtr copy() final {
-        return make_value_ptr<Pi>(this->name, this->domain->copy(), this->codomain);
+        return make_value_ptr<Pi>(this->name, this->domain->copy(), this->codomain.copy());
     }
 };
 
@@ -77,7 +77,7 @@ public:
     }
 
     ValuePtr copy() final {
-        return make_value_ptr<LPi>(this->name, this->codomain);
+        return make_value_ptr<LPi>(this->name, this->codomain.copy());
     }
 };
 }

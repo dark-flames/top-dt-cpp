@@ -7,7 +7,7 @@
 
 using namespace std;
 
-string repeat(const char* str, unsigned int n) {
+string repeat(const char* str, int n) {
     std::string r;
     for (int i = 0; i < n; ++i) {
         r += str;
@@ -19,7 +19,7 @@ Block::Block() {
     Block(BlockWrapper::None, Indentation::Inline, 0);
 }
 
-Block::Block(BlockWrapper w, Indentation s, unsigned int t) {
+Block::Block(BlockWrapper w, Indentation s, int t) {
     lines.emplace_back();
     wrapper = w;
     style = s;
@@ -41,7 +41,7 @@ Block& Block::new_line(const string& token) {
 string Block::format_with(
     const char* tab,
     const char* line,
-    unsigned int carried_tabs
+    int carried_tabs
 ) {
     string current;
     for (auto i = this->lines.begin(); i != this->lines.end(); ++i) {
@@ -109,7 +109,7 @@ void Line::append_block(BlockPtr& block) {
 string Line::format_with(
     const char* tab,
     const char* line,
-    unsigned int tab_count
+    int tab_count
 ) {
     string current = repeat(tab, tab_count);
     for (const auto& token : this->tokens) {

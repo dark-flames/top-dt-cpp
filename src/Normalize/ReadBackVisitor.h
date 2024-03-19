@@ -5,20 +5,10 @@
 
 #include <memory>
 
-class ReadBackState;
-
-using ReadBackStatePtr = std::shared_ptr<ReadBackState>;
-
-class ReadBackState {
-private:
-public:
-    ReadBackState() {}
-};
 
 class ReadBackVisitor : public ValueVisitor<TermPtr> {
 private:
-    ReadBackStatePtr state;
-    EvalVisitor evaluator;
+    EvalVisitor& evaluator;
 protected:
     TermPtr visit_var(value::Var& node) final;
 
@@ -37,10 +27,9 @@ protected:
     TermPtr visit_univ_omega(value::UnivOmega& node) final;
 
 public:
-    ReadBackVisitor(
-        ReadBackStatePtr& state,
+    explicit ReadBackVisitor(
         EvalVisitor& evaluator
-    ) : state(state), evaluator(evaluator) {}
+    ) : evaluator(evaluator) {}
 };
 
 using ReadBackVisitorPtr = std::shared_ptr<ReadBackVisitor>;

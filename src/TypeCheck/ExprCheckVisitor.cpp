@@ -7,7 +7,7 @@ using namespace std;
 
 TermPtr ExprCheckVisitor::visit_lambda(syntax::Lambda& node) {
     if (this->as->ty() == ValueTy::Pi) {
-        auto as_pi = static_cast<value::Pi*>(this->as);
+        auto as_pi = dynamic_cast<value::Pi*>(this->as);
 
         auto v = this->type_checker->bind(node.name, as_pi->domain->copy());
         auto codomain = this->type_checker
@@ -18,7 +18,7 @@ TermPtr ExprCheckVisitor::visit_lambda(syntax::Lambda& node) {
         this->type_checker->pop();
         return term::lambda(node.name, std::move(body));
     } else if (this->as->ty() == ValueTy::LPi) {
-        auto as_pi = static_cast<value::LPi*>(this->as);
+        auto as_pi = dynamic_cast<value::LPi*>(this->as);
 
         auto v = this->type_checker->bind_level(node.name);
         auto codomain = this->type_checker

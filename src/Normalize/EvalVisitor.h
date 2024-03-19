@@ -7,20 +7,14 @@
 
 #include <memory>
 
-class EvalState {
-public:
-    EvalState() {}
-};
-
-using EvalStatePtr = std::shared_ptr<EvalState>;
+class DeclarationResolver;
 
 class EvalVisitor : public TermVisitor<ValuePtr> {
 private:
     Environment env;
-    EvalStatePtr state;
+    DeclarationResolver& declaration_resolver;
 
     Environment bind(bool is_level = false);
-
 protected:
     ValuePtr visit_lmax(term::LMax& node) final;
 
@@ -43,6 +37,8 @@ protected:
     ValuePtr visit_lpi(term::LPi& node) final;
 
     ValuePtr visit_var(term::Var& node) final;
+
+    ValuePtr visit_def_ref(term::DefRef& node) override;
 
     ValuePtr visit_lsuc(term::LSuc& node) final;
 
@@ -67,13 +63,13 @@ public:
 
     ValuePtr value_application(Value& f, Value& p);
 
-    unsigned int env_size() const {
+    Size env_size() const {
         return this->env.size();
     }
 
-    explicit EvalVisitor(EvalStatePtr& state) : env(), state(state) {}
+    explicit EvalVisitor(DeclarationResolver& declaration_resolver)
+        : env(), declaration_resolver(declaration_resolver) {}
 
-    EvalVisitor(Environment& env, EvalStatePtr& state) : env(env), state(state) {}
-
-    EvalVisitor() : state(std::make_shared<EvalState>()) {}
+    EvalVisitor(Environment& env, DeclarationResolver& declaration_resolver)
+        : env(env), declaration_resolver(declaration_resolver) {}
 };

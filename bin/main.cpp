@@ -24,7 +24,20 @@ int main(int argc, char* argv[]) {
 
         auto decls = parser.get_result();
 
-        cout << "finish" << endl;
+        auto type_checker = new TypeChecker();
+
+        for (auto&& decl : decls) {
+            type_checker->add_decl(decl);
+        }
+
+        auto result = type_checker->normalize_entry("main");
+        delete type_checker;
+        auto printer_state = make_shared<TermPrettyPrinterState>();
+        auto pretty_printer = TermPrettyPrinter(printer_state);
+
+        auto block = pretty_printer.pretty_inline(result);
+        cout << "Normalize into:" << block->format_inline() << endl;
+
     } else {
         cerr << "Pleas input filename" << endl;
     }

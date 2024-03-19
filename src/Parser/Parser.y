@@ -43,13 +43,13 @@
 %token               AS
 %token               CUP
 %token               PLUS
-%token <MetaNat>     LNAT
+%token <MetaNat>         LNAT
 %token               SPLIT
 %token               END
 
 %type <UncheckedDecls> Program
 %type <UncheckedPtr> Declaration
-%type <SyntaxPtr> AtomExpr AppExpr Expr LevelAtomExpr LevelExpr
+%type <SyntaxPtr> AtomExpr AppExpr Expr
 %type <std::vector<Id>> BindList
 
 %start Program
@@ -69,21 +69,16 @@ Expr : LAMBDA BindList ARROW Expr                     { $$ = syntax::bind($2, st
     | AppExpr ARROW Expr                              { $$ = syntax::pi("_", std::move($1), std::move($3)); }
     | AppExpr                                         { $$ = std::move($1); }
 
-AppExpr : UNIV LevelExpr        { $$ = syntax::univ(std::move($2)); }
-    | AppExpr AtomExpr         { $$ = syntax::app(std::move($1), std::move($2)); }
-    | AtomExpr                 { $$ = std::move($1); }
+AppExpr : UNIV AtomExpr            { $$ = syntax::univ(std::move($2)); }
+    | AtomExpr PLUS LNAT           { $$ = syntax::l_incr(std::move($1), $3); }
+    | AppExpr CUP AtomExpr         { $$ = syntax::l_max(std::move($1), std::move($3)); }
+    | AppExpr AtomExpr             { $$ = syntax::app(std::move($1), std::move($2)); }
+    | AtomExpr                     { $$ = std::move($1); }
 
 AtomExpr : LEVEL                  { $$ = syntax::level(); }
     | ID                          { $$ = syntax::ref(std::move($1)); }
+    | LNAT                        { $$ = syntax::l_nat($1); }
     | LEFT_PAREN Expr RIGHT_PAREN { $$ = std::move($2);  }
-
-LevelExpr : LevelExpr PLUS LNAT    { $$ = syntax::l_incr(std::move($1), $3); }
-    | LevelExpr CUP LevelAtomExpr  { $$ = syntax::l_max(std::move($1), std::move($3)); }
-    | LevelAtomExpr                { $$ = std::move($1); }
-
-LevelAtomExpr : ID                     { $$ = syntax::ref(std::move($1)); }
-    | LNAT                             { $$ = syntax::l_nat($1); }
-    | LEFT_PAREN LevelExpr RIGHT_PAREN { $$ = std::move($2);  }
 
 BindList : ID      { std::vector<Id> s; s.push_back(std::move($1)); $$ = std::move(s); }
     | BindList ID { $1.push_back(std::move($2)); $$ = std::move($1); }

@@ -20,43 +20,38 @@ Grammar
     9     | AppExpr ARROW Expr
    10     | AppExpr
 
-   11 AppExpr: UNIV LevelExpr
-   12        | AppExpr AtomExpr
-   13        | AtomExpr
+   11 AppExpr: UNIV AtomExpr
+   12        | AtomExpr PLUS LNAT
+   13        | AppExpr CUP AtomExpr
+   14        | AppExpr AtomExpr
+   15        | AtomExpr
 
-   14 AtomExpr: LEVEL
-   15         | ID
-   16         | LEFT_PAREN Expr RIGHT_PAREN
+   16 AtomExpr: LEVEL
+   17         | ID
+   18         | LNAT
+   19         | LEFT_PAREN Expr RIGHT_PAREN
 
-   17 LevelExpr: LevelExpr PLUS LNAT
-   18          | LevelExpr CUP LevelAtomExpr
-   19          | LevelAtomExpr
-
-   20 LevelAtomExpr: ID
-   21              | LNAT
-   22              | LEFT_PAREN LevelExpr RIGHT_PAREN
-
-   23 BindList: ID
-   24         | BindList ID
+   20 BindList: ID
+   21         | BindList ID
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
     error (256)
-    ID <Id> (258) 4 5 6 8 15 20 23 24
+    ID <Id> (258) 4 5 6 8 17 20 21
     UNIV (259) 11
-    LEVEL (260) 14
+    LEVEL (260) 16
     ARROW (261) 7 8 9
     COLON (262) 4 8
-    LEFT_PAREN (263) 8 16 22
-    RIGHT_PAREN (264) 8 16 22
+    LEFT_PAREN (263) 8 19
+    RIGHT_PAREN (264) 8 19
     LAMBDA (265) 7
     EQ (266) 5 6
     AS (267)
-    CUP (268) 18
-    PLUS (269) 17
-    LNAT <MetaNat> (270) 17 21
+    CUP (268) 13
+    PLUS (269) 12
+    LNAT <MetaNat> (270) 12 18
     SPLIT (271) 4 5 6
     END (272) 3
 
@@ -73,22 +68,16 @@ Nonterminals, with rules where they appear
         on right: 1 2
     Expr <SyntaxPtr> (21)
         on left: 7 8 9 10
-        on right: 4 5 6 7 8 9 16
+        on right: 4 5 6 7 8 9 19
     AppExpr <SyntaxPtr> (22)
-        on left: 11 12 13
-        on right: 9 10 12
+        on left: 11 12 13 14 15
+        on right: 9 10 13 14
     AtomExpr <SyntaxPtr> (23)
-        on left: 14 15 16
-        on right: 12 13
-    LevelExpr <SyntaxPtr> (24)
-        on left: 17 18 19
-        on right: 11 17 18 22
-    LevelAtomExpr <SyntaxPtr> (25)
-        on left: 20 21 22
-        on right: 18 19
-    BindList <std::vector<Id>> (26)
-        on left: 23 24
-        on right: 6 7 24
+        on left: 16 17 18 19
+        on right: 11 12 13 14 15
+    BindList <std::vector<Id>> (24)
+        on left: 20 21
+        on right: 6 7 21
 
 
 State 0
@@ -136,9 +125,9 @@ State 3
 
 State 4
 
-   23 BindList: ID •
+   20 BindList: ID •
 
-    $default  reduce using rule 23 (BindList)
+    $default  reduce using rule 20 (BindList)
 
 
 State 5
@@ -150,10 +139,11 @@ State 5
     LEVEL       shift, and go to state 13
     LEFT_PAREN  shift, and go to state 14
     LAMBDA      shift, and go to state 15
+    LNAT        shift, and go to state 16
 
-    Expr      go to state 16
-    AppExpr   go to state 17
-    AtomExpr  go to state 18
+    Expr      go to state 17
+    AppExpr   go to state 18
+    AtomExpr  go to state 19
 
 
 State 6
@@ -165,19 +155,20 @@ State 6
     LEVEL       shift, and go to state 13
     LEFT_PAREN  shift, and go to state 14
     LAMBDA      shift, and go to state 15
+    LNAT        shift, and go to state 16
 
-    Expr      go to state 19
-    AppExpr   go to state 17
-    AtomExpr  go to state 18
+    Expr      go to state 20
+    AppExpr   go to state 18
+    AtomExpr  go to state 19
 
 
 State 7
 
     6 Declaration: ID BindList • EQ Expr SPLIT
-   24 BindList: BindList • ID
+   21 BindList: BindList • ID
 
-    ID  shift, and go to state 20
-    EQ  shift, and go to state 21
+    ID  shift, and go to state 21
+    EQ  shift, and go to state 22
 
 
 State 8
@@ -203,44 +194,45 @@ State 10
 
 State 11
 
-   15 AtomExpr: ID •
+   17 AtomExpr: ID •
 
-    $default  reduce using rule 15 (AtomExpr)
+    $default  reduce using rule 17 (AtomExpr)
 
 
 State 12
 
-   11 AppExpr: UNIV • LevelExpr
+   11 AppExpr: UNIV • AtomExpr
 
-    ID          shift, and go to state 22
+    ID          shift, and go to state 11
+    LEVEL       shift, and go to state 13
     LEFT_PAREN  shift, and go to state 23
-    LNAT        shift, and go to state 24
+    LNAT        shift, and go to state 16
 
-    LevelExpr      go to state 25
-    LevelAtomExpr  go to state 26
+    AtomExpr  go to state 24
 
 
 State 13
 
-   14 AtomExpr: LEVEL •
+   16 AtomExpr: LEVEL •
 
-    $default  reduce using rule 14 (AtomExpr)
+    $default  reduce using rule 16 (AtomExpr)
 
 
 State 14
 
     8 Expr: LEFT_PAREN • ID COLON Expr RIGHT_PAREN ARROW Expr
-   16 AtomExpr: LEFT_PAREN • Expr RIGHT_PAREN
+   19 AtomExpr: LEFT_PAREN • Expr RIGHT_PAREN
 
-    ID          shift, and go to state 27
+    ID          shift, and go to state 25
     UNIV        shift, and go to state 12
     LEVEL       shift, and go to state 13
     LEFT_PAREN  shift, and go to state 14
     LAMBDA      shift, and go to state 15
+    LNAT        shift, and go to state 16
 
-    Expr      go to state 28
-    AppExpr   go to state 17
-    AtomExpr  go to state 18
+    Expr      go to state 26
+    AppExpr   go to state 18
+    AtomExpr  go to state 19
 
 
 State 15
@@ -249,54 +241,67 @@ State 15
 
     ID  shift, and go to state 4
 
-    BindList  go to state 29
+    BindList  go to state 27
 
 
 State 16
 
-    4 Declaration: ID COLON Expr • SPLIT
+   18 AtomExpr: LNAT •
 
-    SPLIT  shift, and go to state 30
+    $default  reduce using rule 18 (AtomExpr)
 
 
 State 17
 
-    9 Expr: AppExpr • ARROW Expr
-   10     | AppExpr •
-   12 AppExpr: AppExpr • AtomExpr
+    4 Declaration: ID COLON Expr • SPLIT
 
-    ID          shift, and go to state 11
-    LEVEL       shift, and go to state 13
-    ARROW       shift, and go to state 31
-    LEFT_PAREN  shift, and go to state 32
-
-    $default  reduce using rule 10 (Expr)
-
-    AtomExpr  go to state 33
+    SPLIT  shift, and go to state 28
 
 
 State 18
 
-   13 AppExpr: AtomExpr •
+    9 Expr: AppExpr • ARROW Expr
+   10     | AppExpr •
+   13 AppExpr: AppExpr • CUP AtomExpr
+   14        | AppExpr • AtomExpr
 
-    $default  reduce using rule 13 (AppExpr)
+    ID          shift, and go to state 11
+    LEVEL       shift, and go to state 13
+    ARROW       shift, and go to state 29
+    LEFT_PAREN  shift, and go to state 23
+    CUP         shift, and go to state 30
+    LNAT        shift, and go to state 16
+
+    $default  reduce using rule 10 (Expr)
+
+    AtomExpr  go to state 31
 
 
 State 19
 
-    5 Declaration: ID EQ Expr • SPLIT
+   12 AppExpr: AtomExpr • PLUS LNAT
+   15        | AtomExpr •
 
-    SPLIT  shift, and go to state 34
+    PLUS  shift, and go to state 32
+
+    $default  reduce using rule 15 (AppExpr)
 
 
 State 20
 
-   24 BindList: BindList ID •
+    5 Declaration: ID EQ Expr • SPLIT
 
-    $default  reduce using rule 24 (BindList)
+    SPLIT  shift, and go to state 33
 
 
 State 21
+
+   21 BindList: BindList ID •
+
+    $default  reduce using rule 21 (BindList)
+
+
+State 22
 
     6 Declaration: ID BindList EQ • Expr SPLIT
 
@@ -305,91 +310,70 @@ State 21
     LEVEL       shift, and go to state 13
     LEFT_PAREN  shift, and go to state 14
     LAMBDA      shift, and go to state 15
+    LNAT        shift, and go to state 16
 
-    Expr      go to state 35
-    AppExpr   go to state 17
-    AtomExpr  go to state 18
-
-
-State 22
-
-   20 LevelAtomExpr: ID •
-
-    $default  reduce using rule 20 (LevelAtomExpr)
+    Expr      go to state 34
+    AppExpr   go to state 18
+    AtomExpr  go to state 19
 
 
 State 23
 
-   22 LevelAtomExpr: LEFT_PAREN • LevelExpr RIGHT_PAREN
+   19 AtomExpr: LEFT_PAREN • Expr RIGHT_PAREN
 
-    ID          shift, and go to state 22
-    LEFT_PAREN  shift, and go to state 23
-    LNAT        shift, and go to state 24
+    ID          shift, and go to state 11
+    UNIV        shift, and go to state 12
+    LEVEL       shift, and go to state 13
+    LEFT_PAREN  shift, and go to state 14
+    LAMBDA      shift, and go to state 15
+    LNAT        shift, and go to state 16
 
-    LevelExpr      go to state 36
-    LevelAtomExpr  go to state 26
+    Expr      go to state 26
+    AppExpr   go to state 18
+    AtomExpr  go to state 19
 
 
 State 24
 
-   21 LevelAtomExpr: LNAT •
-
-    $default  reduce using rule 21 (LevelAtomExpr)
-
-
-State 25
-
-   11 AppExpr: UNIV LevelExpr •
-   17 LevelExpr: LevelExpr • PLUS LNAT
-   18          | LevelExpr • CUP LevelAtomExpr
-
-    CUP   shift, and go to state 37
-    PLUS  shift, and go to state 38
+   11 AppExpr: UNIV AtomExpr •
 
     $default  reduce using rule 11 (AppExpr)
 
 
+State 25
+
+    8 Expr: LEFT_PAREN ID • COLON Expr RIGHT_PAREN ARROW Expr
+   17 AtomExpr: ID •
+
+    COLON  shift, and go to state 35
+
+    $default  reduce using rule 17 (AtomExpr)
+
+
 State 26
 
-   19 LevelExpr: LevelAtomExpr •
+   19 AtomExpr: LEFT_PAREN Expr • RIGHT_PAREN
 
-    $default  reduce using rule 19 (LevelExpr)
+    RIGHT_PAREN  shift, and go to state 36
 
 
 State 27
 
-    8 Expr: LEFT_PAREN ID • COLON Expr RIGHT_PAREN ARROW Expr
-   15 AtomExpr: ID •
+    7 Expr: LAMBDA BindList • ARROW Expr
+   21 BindList: BindList • ID
 
-    COLON  shift, and go to state 39
-
-    $default  reduce using rule 15 (AtomExpr)
+    ID     shift, and go to state 21
+    ARROW  shift, and go to state 37
 
 
 State 28
-
-   16 AtomExpr: LEFT_PAREN Expr • RIGHT_PAREN
-
-    RIGHT_PAREN  shift, and go to state 40
-
-
-State 29
-
-    7 Expr: LAMBDA BindList • ARROW Expr
-   24 BindList: BindList • ID
-
-    ID     shift, and go to state 20
-    ARROW  shift, and go to state 41
-
-
-State 30
 
     4 Declaration: ID COLON Expr SPLIT •
 
     $default  reduce using rule 4 (Declaration)
 
 
-State 31
+State 29
 
     9 Expr: AppExpr ARROW • Expr
 
@@ -398,78 +382,54 @@ State 31
     LEVEL       shift, and go to state 13
     LEFT_PAREN  shift, and go to state 14
     LAMBDA      shift, and go to state 15
+    LNAT        shift, and go to state 16
 
-    Expr      go to state 42
-    AppExpr   go to state 17
-    AtomExpr  go to state 18
+    Expr      go to state 38
+    AppExpr   go to state 18
+    AtomExpr  go to state 19
+
+
+State 30
+
+   13 AppExpr: AppExpr CUP • AtomExpr
+
+    ID          shift, and go to state 11
+    LEVEL       shift, and go to state 13
+    LEFT_PAREN  shift, and go to state 23
+    LNAT        shift, and go to state 16
+
+    AtomExpr  go to state 39
+
+
+State 31
+
+   14 AppExpr: AppExpr AtomExpr •
+
+    $default  reduce using rule 14 (AppExpr)
 
 
 State 32
 
-   16 AtomExpr: LEFT_PAREN • Expr RIGHT_PAREN
+   12 AppExpr: AtomExpr PLUS • LNAT
 
-    ID          shift, and go to state 11
-    UNIV        shift, and go to state 12
-    LEVEL       shift, and go to state 13
-    LEFT_PAREN  shift, and go to state 14
-    LAMBDA      shift, and go to state 15
-
-    Expr      go to state 28
-    AppExpr   go to state 17
-    AtomExpr  go to state 18
+    LNAT  shift, and go to state 40
 
 
 State 33
-
-   12 AppExpr: AppExpr AtomExpr •
-
-    $default  reduce using rule 12 (AppExpr)
-
-
-State 34
 
     5 Declaration: ID EQ Expr SPLIT •
 
     $default  reduce using rule 5 (Declaration)
 
 
-State 35
+State 34
 
     6 Declaration: ID BindList EQ Expr • SPLIT
 
-    SPLIT  shift, and go to state 43
+    SPLIT  shift, and go to state 41
 
 
-State 36
-
-   17 LevelExpr: LevelExpr • PLUS LNAT
-   18          | LevelExpr • CUP LevelAtomExpr
-   22 LevelAtomExpr: LEFT_PAREN LevelExpr • RIGHT_PAREN
-
-    RIGHT_PAREN  shift, and go to state 44
-    CUP          shift, and go to state 37
-    PLUS         shift, and go to state 38
-
-
-State 37
-
-   18 LevelExpr: LevelExpr CUP • LevelAtomExpr
-
-    ID          shift, and go to state 22
-    LEFT_PAREN  shift, and go to state 23
-    LNAT        shift, and go to state 24
-
-    LevelAtomExpr  go to state 45
-
-
-State 38
-
-   17 LevelExpr: LevelExpr PLUS • LNAT
-
-    LNAT  shift, and go to state 46
-
-
-State 39
+State 35
 
     8 Expr: LEFT_PAREN ID COLON • Expr RIGHT_PAREN ARROW Expr
 
@@ -478,20 +438,21 @@ State 39
     LEVEL       shift, and go to state 13
     LEFT_PAREN  shift, and go to state 14
     LAMBDA      shift, and go to state 15
+    LNAT        shift, and go to state 16
 
-    Expr      go to state 47
-    AppExpr   go to state 17
-    AtomExpr  go to state 18
-
-
-State 40
-
-   16 AtomExpr: LEFT_PAREN Expr RIGHT_PAREN •
-
-    $default  reduce using rule 16 (AtomExpr)
+    Expr      go to state 42
+    AppExpr   go to state 18
+    AtomExpr  go to state 19
 
 
-State 41
+State 36
+
+   19 AtomExpr: LEFT_PAREN Expr RIGHT_PAREN •
+
+    $default  reduce using rule 19 (AtomExpr)
+
+
+State 37
 
     7 Expr: LAMBDA BindList ARROW • Expr
 
@@ -500,69 +461,63 @@ State 41
     LEVEL       shift, and go to state 13
     LEFT_PAREN  shift, and go to state 14
     LAMBDA      shift, and go to state 15
+    LNAT        shift, and go to state 16
 
-    Expr      go to state 48
-    AppExpr   go to state 17
-    AtomExpr  go to state 18
+    Expr      go to state 43
+    AppExpr   go to state 18
+    AtomExpr  go to state 19
 
 
-State 42
+State 38
 
     9 Expr: AppExpr ARROW Expr •
 
     $default  reduce using rule 9 (Expr)
 
 
-State 43
+State 39
+
+   13 AppExpr: AppExpr CUP AtomExpr •
+
+    $default  reduce using rule 13 (AppExpr)
+
+
+State 40
+
+   12 AppExpr: AtomExpr PLUS LNAT •
+
+    $default  reduce using rule 12 (AppExpr)
+
+
+State 41
 
     6 Declaration: ID BindList EQ Expr SPLIT •
 
     $default  reduce using rule 6 (Declaration)
 
 
-State 44
-
-   22 LevelAtomExpr: LEFT_PAREN LevelExpr RIGHT_PAREN •
-
-    $default  reduce using rule 22 (LevelAtomExpr)
-
-
-State 45
-
-   18 LevelExpr: LevelExpr CUP LevelAtomExpr •
-
-    $default  reduce using rule 18 (LevelExpr)
-
-
-State 46
-
-   17 LevelExpr: LevelExpr PLUS LNAT •
-
-    $default  reduce using rule 17 (LevelExpr)
-
-
-State 47
+State 42
 
     8 Expr: LEFT_PAREN ID COLON Expr • RIGHT_PAREN ARROW Expr
 
-    RIGHT_PAREN  shift, and go to state 49
+    RIGHT_PAREN  shift, and go to state 44
 
 
-State 48
+State 43
 
     7 Expr: LAMBDA BindList ARROW Expr •
 
     $default  reduce using rule 7 (Expr)
 
 
-State 49
+State 44
 
     8 Expr: LEFT_PAREN ID COLON Expr RIGHT_PAREN • ARROW Expr
 
-    ARROW  shift, and go to state 50
+    ARROW  shift, and go to state 45
 
 
-State 50
+State 45
 
     8 Expr: LEFT_PAREN ID COLON Expr RIGHT_PAREN ARROW • Expr
 
@@ -571,13 +526,14 @@ State 50
     LEVEL       shift, and go to state 13
     LEFT_PAREN  shift, and go to state 14
     LAMBDA      shift, and go to state 15
+    LNAT        shift, and go to state 16
 
-    Expr      go to state 51
-    AppExpr   go to state 17
-    AtomExpr  go to state 18
+    Expr      go to state 46
+    AppExpr   go to state 18
+    AtomExpr  go to state 19
 
 
-State 51
+State 46
 
     8 Expr: LEFT_PAREN ID COLON Expr RIGHT_PAREN ARROW Expr •
 

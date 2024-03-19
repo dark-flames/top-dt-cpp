@@ -18,27 +18,29 @@ using ValueWithSize = std::pair<VTyPtr, Size>;
 
 class ContextNode {
 public:
-    virtual Size size() const {
+    ContextNode() {}
+
+    virtual Size size() {
         return 0;
     }
 
-    virtual std::optional<ValueWithSize> find(Id& ref) const {
+    virtual std::optional<ValueWithSize> find(Id& ref) {
         return {};
     }
 
-    virtual std::optional<ValueWithSize> find(DBIndex index) const {
+    virtual std::optional<ValueWithSize> find(DBIndex index) {
         return {};
     }
 
-    virtual std::optional<Size> find_level(Id& ref) const {
+    virtual std::optional<Size> find_level(Id& ref) {
         return {};
     }
 
-    virtual std::optional<Size> find_level(DBIndex index) const {
+    virtual std::optional<Size> find_level(DBIndex index) {
         return {};
     }
 
-    virtual ContextNodePtr get_prev() const {
+    virtual ContextNodePtr get_prev() {
         throw std::runtime_error("No previous segment.");
     }
 };
@@ -53,21 +55,21 @@ public:
     ContextConsNode(ContextNodePtr& prev, VTyPtr& ty, Id& name) :
         prev(prev), count(prev->size() + 1), name(name), ty(std::move(ty)) {}
 
-    [[nodiscard]] Size size() const final {
+    [[nodiscard]] Size size() final {
         return this->count;
     }
 
-    ContextNodePtr get_prev() const final {
+    ContextNodePtr get_prev() final {
         return this->prev;
     }
 
-    virtual std::optional<ValueWithSize> find(Id& ref) const final;
+    std::optional<ValueWithSize> find(Id& ref) final;
 
-    virtual std::optional<ValueWithSize> find(DBIndex index) const final;
+    std::optional<ValueWithSize> find(DBIndex index) final;
 
-    virtual std::optional<Size> find_level(Id& ref) const final;
+    std::optional<Size> find_level(Id& ref) final;
 
-    virtual std::optional<Size> find_level(DBIndex index) const final;
+    std::optional<Size> find_level(DBIndex index) final;
 
     friend class Context;
 };
@@ -81,21 +83,21 @@ public:
     ContextConsLevelNode(ContextNodePtr& prev, Id& name) :
         prev(prev), count(prev->size() + 1), name(name) {}
 
-    Size size() const final {
+    Size size() final {
         return this->count;
     }
 
-    ContextNodePtr get_prev() const final {
+    ContextNodePtr get_prev() final {
         return this->prev;
     }
 
-    virtual std::optional<ValueWithSize> find(Id& ref) const final;
+    virtual std::optional<ValueWithSize> find(Id& ref) final;
 
-    virtual std::optional<ValueWithSize> find(DBIndex index) const final;
+    virtual std::optional<ValueWithSize> find(DBIndex index) final;
 
-    virtual std::optional<Size> find_level(Id& ref) const final;
+    virtual std::optional<Size> find_level(Id& ref) final;
 
-    virtual std::optional<Size> find_level(DBIndex index) const final;
+    virtual std::optional<Size> find_level(DBIndex index) final;
 
     friend class Context;
 };
@@ -116,15 +118,13 @@ public:
         this->tail = std::make_shared<ContextNode>();
     }
 
-    [[nodiscard]] Size size() const {
+    [[nodiscard]] Size size() {
         return this->tail->size();
     }
 
-    template<class T>
-    std::optional<VTyWithIndex> find(T& index) const;
+    std::optional<VTyWithIndex> find(Id& index);
 
-    template<class T>
-    std::optional<DBIndex> find_level(T& index) const;
+    std::optional<DBIndex> find_level(Id& index);
 
     /**
      * This function will now affect *this, but just return the new environment.

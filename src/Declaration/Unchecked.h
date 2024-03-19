@@ -5,6 +5,7 @@
 #include <Syntax/SyntaxNode.h>
 
 #include <vector>
+#include <iostream>
 
 class UncheckedDeclaration : public Declaration {
 public:
@@ -56,12 +57,15 @@ using UncheckedDecls = std::vector<UncheckedPtr>;
 
 inline UncheckedPtr raw_signature(Id name, SyntaxPtr type) {
     UncheckedPtr ptr = std::make_unique<UncheckedSignature>(name, type);
-
     return ptr;
 }
 
 inline UncheckedPtr raw_body(Id name, SyntaxPtr body) {
     UncheckedPtr ptr = std::make_unique<UncheckedBody>(name, body);
+    return ptr;
+}
 
+inline UncheckedPtr unchecked(SyntaxPtr type, SyntaxPtr body) {
+    UncheckedPtr ptr = std::make_unique<UncheckedDeclaration>(type, body);
     return ptr;
 }

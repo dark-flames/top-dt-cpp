@@ -20,3 +20,13 @@ public:
 
     UnknownEntry(std::string& entry) : entry(entry) {}
 };
+
+class CannotPushDecl : public DeclarationException {
+public:
+    std::string msg;
+
+
+    CannotPushDecl(std::string& entry, const char* ty) : msg(
+        "Cannot push " + std::string(ty) + "declaration to `" + entry + "`"
+    ) {}
+};

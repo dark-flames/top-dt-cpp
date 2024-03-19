@@ -2,7 +2,7 @@
 
 using namespace std;
 
-DBIndex level_to_index(unsigned int c, DBLevel l) {
+DBIndex level_to_index(DBIndex c, DBLevel l) {
     return c - l - 1;
 }
 

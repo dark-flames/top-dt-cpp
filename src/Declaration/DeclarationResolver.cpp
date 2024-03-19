@@ -32,7 +32,7 @@ WithSignature* DeclarationResolver::try_check_signature(Entry& entry) {
     auto original = std::move(this->current_entry);
     this->current_entry = entry;
     auto decl = this->get_decl(entry);
-    auto unchecked = static_cast<UncheckedDeclaration*>(decl);
+    UncheckedDeclaration* unchecked = dynamic_cast<UncheckedDeclaration*>(decl);
     auto res = this->type_checker->check_ty(*unchecked->type);
     auto vty = this->type_checker->eval(*res.first);
 
@@ -46,7 +46,7 @@ WithSignature* DeclarationResolver::try_check_signature(Entry& entry) {
     this->current_entry = std::move(original);
 
     auto new_decl = this->get_decl(entry);
-    return static_cast<WithSignature*>(decl);
+    return dynamic_cast<WithSignature*>(new_decl);
 }
 
 CheckedDeclaration* DeclarationResolver::try_check(Entry& entry) {
@@ -54,7 +54,7 @@ CheckedDeclaration* DeclarationResolver::try_check(Entry& entry) {
     this->current_entry = entry;
     auto decl = this->get_decl(entry);
 
-    auto s = static_cast<CheckedSignature*>(decl);
+    auto s = dynamic_cast<CheckedSignature*>(decl);
     auto res = this->type_checker->check_expr(*s->body, s->type.get());
 
     DeclarationPtr new_dec = make_unique<CheckedDeclaration>(
@@ -62,18 +62,60 @@ CheckedDeclaration* DeclarationResolver::try_check(Entry& entry) {
         res
     );
 
-    this->declarations[std::move(entry)] = std::move(new_dec);
+    this->declarations[entry] = std::move(new_dec);
 
     this->current_entry = std::move(original);
 
     auto new_decl = this->get_decl(entry);
-    return static_cast<CheckedDeclaration*>(decl);
+    return dynamic_cast<CheckedDeclaration*>(new_decl);
 }
 
-DeclarationResolver& DeclarationResolver::push_unchecked(Entry& entry, UncheckedPtr& decl) {
-    this->declarations[std::move(entry)] = std::move(decl);
-
+DeclarationResolver& DeclarationResolver::push_unchecked_body(UncheckedBody& body) {
+    auto res = this->declarations.find(body.name);
+    if (res == this->declarations.end()) {
+        this->declarations.insert(
+            std::make_pair(
+                body.name,
+                raw_body(body.name, std::move(body.body))
+            ));
+    } else if ((*res).second->state() == DeclarationState::UncheckedSignature) {
+        UncheckedSignature* signature = dynamic_cast<UncheckedSignature*>((*res).second.get());
+        this->declarations[body.name] = unchecked(std::move(signature->type), std::move(body.body));
+    } else {
+        throw CannotPushDecl(body.name, "unchecked body");
+    }
     return *this;
+}
+
+DeclarationResolver& DeclarationResolver::push_unchecked_signature(UncheckedSignature& signature) {
+    auto res = this->declarations.find(signature.name);
+    if (res == this->declarations.end()) {
+        this->declarations.insert(
+            std::make_pair(
+                signature.name,
+                raw_signature(signature.name, std::move(signature.type))
+            ));
+    } else if ((*res).second->state() == DeclarationState::UncheckedBody) {
+        UncheckedBody* body = dynamic_cast<UncheckedBody*>((*res).second.get());
+        this->declarations[signature.name] = unchecked(std::move(signature.type), std::move(body->body));
+    } else {
+        throw CannotPushDecl(signature.name, "unchecked signature");
+    }
+    return *this;
+}
+
+DeclarationResolver& DeclarationResolver::push_unchecked(UncheckedPtr& decl) {
+    if (decl->state() == DeclarationState::UncheckedSignature) {
+        UncheckedSignature* signature = dynamic_cast<UncheckedSignature*>(decl.get());
+        return this->push_unchecked_signature(*signature);
+    } else if (decl->state() == DeclarationState::UncheckedBody) {
+        UncheckedBody* body = dynamic_cast<UncheckedBody*>(decl.get());
+        return this->push_unchecked_body(*body);
+    } else {
+        throw ImpossibleException(
+            "Only unchecked signature or body can be pushed to `DeclarationResolver`"
+        );
+    }
 }
 
 WithSignature* DeclarationResolver::get_signature_or_waiting(Entry& entry) {
@@ -81,7 +123,7 @@ WithSignature* DeclarationResolver::get_signature_or_waiting(Entry& entry) {
 
     if (decl->state() == DeclarationState::SignatureOnly ||
         decl->state() == DeclarationState::Finished) {
-        return static_cast<WithSignature*>(decl);
+        return dynamic_cast<WithSignature*>(decl);
     } else {
         this->waiting_for[this->current_entry] = entry;
         auto result = this->try_check_signature(entry);
@@ -94,7 +136,7 @@ CheckedDeclaration* DeclarationResolver::get_body_or_waiting(Entry& entry) {
     auto decl = this->get_decl(entry);
 
     if (decl->state() == DeclarationState::Finished) {
-        return static_cast<CheckedDeclaration*>(decl);
+        return dynamic_cast<CheckedDeclaration*>(decl);
     } else if (decl->state() == DeclarationState::SignatureOnly) {
         this->waiting_for[this->current_entry] = entry;
         auto result = this->try_check(entry);

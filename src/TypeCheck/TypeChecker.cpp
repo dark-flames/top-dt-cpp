@@ -2,27 +2,31 @@
 
 using namespace std;
 
+TypeChecker& TypeChecker::add_decl(DeclarationPtr& decl) {
+    this->resolver->push_unchecked(decl);
+    return *this;
+}
 
 ValuePtr TypeChecker::bind(Id& name, VTyPtr ty) {
-    auto new_ctx = context.push(name, ty);
+    auto new_ctx = this->context.push(name, ty);
     this->context = new_ctx;
-    auto v = eval_visitor.bind_in_place(false);
+    auto v = this->eval_visitor->bind_in_place(false);
 
     return v;
 }
 
 ValuePtr TypeChecker::bind_level(Id& name) {
-    auto new_ctx = context.push_level(name);
+    auto new_ctx = this->context.push_level(name);
     this->context = new_ctx;
-    auto v = eval_visitor.bind_in_place(true);
+    auto v = this->eval_visitor->bind_in_place(true);
 
     return v;
 }
 
 void TypeChecker::pop() {
-    auto new_ctx = context.pop();
+    auto new_ctx = this->context.pop();
     this->context = new_ctx;
-    auto v = eval_visitor.pop_variable();
+    auto v = this->eval_visitor->pop_variable();
 }
 
 TermAndType TypeChecker::find_ref(Id& name) {
@@ -36,7 +40,7 @@ TermAndType TypeChecker::find_ref(Id& name) {
         );
     } else {
         try {
-            auto ref = this->resolver.get_signature_or_waiting(name);
+            auto ref = this->resolver->get_signature_or_waiting(name);
             return make_pair(
                 term::def_ref(name),
                 ref->get_ty().copy()
@@ -59,29 +63,29 @@ TermPtr TypeChecker::find_level_ref(Id& name) {
 }
 
 ValuePtr TypeChecker::eval_closure(Closure& closure, ValuePtr v) {
-    return this->eval_visitor.eval_closure(closure, std::move(v));
+    return this->eval_visitor->eval_closure(closure, std::move(v));
 }
 
 ValuePtr TypeChecker::eval(Term& t) {
-    return this->eval_visitor.visit(t);
+    return this->eval_visitor->visit(t);
 }
 
 TermPtr TypeChecker::check_level(Syntax& syn) {
-    return this->level_visitor.visit(syn);
+    return this->level_visitor->visit(syn);
 }
 
 TermPtr TypeChecker::check_expr(Syntax& syn, VTy* as) {
-    this->check_visitor.set_ty(as);
-    return this->check_visitor.visit(syn);
+    this->check_visitor->set_ty(as);
+    return this->check_visitor->visit(syn);
 }
 
 TyAndLevel TypeChecker::check_ty(Syntax& syn) {
-    auto res = this->infer_visitor.visit(syn);
+    auto res = this->infer_visitor->visit(syn);
     auto term = std::move(res.first);
     auto ty = std::move(res.second);
 
     if (ty->ty() == ValueTy::Univ) {
-        auto univ = static_cast<value::Univ*>(ty.get());
+        auto univ = dynamic_cast<value::Univ*>(ty.get());
         return make_pair(std::move(term), std::move(univ->level));
     } else if (ty->ty() == ValueTy::UnivOmega) {
         optional<ValuePtr> nothing = {};
@@ -92,11 +96,19 @@ TyAndLevel TypeChecker::check_ty(Syntax& syn) {
 }
 
 TermAndType TypeChecker::infer_expr(Syntax& syn) {
-    return this->infer_visitor.visit(syn);
+    return this->infer_visitor->visit(syn);
 }
 
 Equality TypeChecker::conv(Value& l, Value* r) {
-    this->compare_visitor.set_rhs(r);
+    this->compare_visitor->set_rhs(r);
 
-    return this->compare_visitor.visit(l);
+    return this->compare_visitor->visit(l);
+}
+
+TermPtr TypeChecker::normalize_entry(Entry entry) {
+    auto decl = this->resolver->get_body_or_waiting(entry);
+    auto copied = decl->body->copy();
+    auto decl_value = this->eval(*copied);
+
+    return this->read_back_visitor->visit(*decl_value);
 }

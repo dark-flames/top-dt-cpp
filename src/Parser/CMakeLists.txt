@@ -10,8 +10,6 @@ add_custom_command(
 
 file(GLOB SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.hh)
 
-message("Files:")
-message(${SOURCE_FILES})
 
-add_library(parser SHARED ${SOURCE_FILES})
-target_link_libraries(parser PRIVATE -Wl,--unresolved-symbols=ignore-all)
+add_library(parser STATIC ${SOURCE_FILES})
+#target_link_libraries(parser PRIVATE -Wl,--unresolved-symbols=ignore-all)

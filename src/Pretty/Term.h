@@ -87,7 +87,7 @@ class LevelPrettyPrinter : public TermVisitor<void> {
 private:
     TermPrettyPrinter* term_printer;
 
-    unsigned int offset;
+    int offset;
     std::optional<BlockPtr> base;
 
     LevelPrettyPrinter& clear_result() {

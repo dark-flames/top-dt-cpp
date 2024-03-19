@@ -34,14 +34,14 @@ Equality CompareVisitor::compare_as_lambda(
     value::Value& rhs,
     bool is_level_binder
 ) {
-    auto v = this->evaluator->bind_in_place(is_level_binder);
-    auto l_body = this->evaluator->value_application(lhs, *v);
-    auto r_body = this->evaluator->value_application(rhs, *v);
+    auto v = this->evaluator.bind_in_place(is_level_binder);
+    auto l_body = this->evaluator.value_application(lhs, *v);
+    auto r_body = this->evaluator.value_application(rhs, *v);
 
     auto body_visitor = this->compare_with(r_body.get());
     auto result = body_visitor.visit(*l_body);
 
-    this->evaluator->pop_variable();
+    this->evaluator.pop_variable();
 
     return result;
 }
@@ -57,21 +57,21 @@ Equality CompareVisitor::visit_llambda(LLambda& node) {
 
 Equality CompareVisitor::visit_pi(Pi& node) {
     if (this->rhs_value->ty() == ValueTy::Pi) {
-        auto rhs = static_cast<value::Pi*>(this->rhs_value);
+        auto rhs = dynamic_cast<value::Pi*>(this->rhs_value);
         auto domain_visitor = this->compare_with(
             rhs->domain.get()
         );
         auto domain_result = domain_visitor.visit(*node.domain);
 
 
-        auto v = this->evaluator->bind_in_place(false);
+        auto v = this->evaluator.bind_in_place(false);
 
-        auto l_codomain = this->evaluator->eval_closure(node.codomain, v->copy());
-        auto r_codomain = this->evaluator->eval_closure(rhs->codomain, move(v));
+        auto l_codomain = this->evaluator.eval_closure(node.codomain, v->copy());
+        auto r_codomain = this->evaluator.eval_closure(rhs->codomain, move(v));
 
         auto body_visitor = this->compare_with(r_codomain.get());
         auto codomain_result = body_visitor.visit(*l_codomain);
-        this->evaluator->pop_variable();
+        this->evaluator.pop_variable();
 
         return merge_equality(domain_result, codomain_result);
     }
@@ -82,15 +82,15 @@ Equality CompareVisitor::visit_pi(Pi& node) {
 
 Equality CompareVisitor::visit_lpi(LPi& node) {
     if (this->rhs_value->ty() == ValueTy::LPi) {
-        auto rhs = static_cast<value::LPi*>(this->rhs_value);
-        auto v = this->evaluator->bind_in_place(false);
+        auto rhs = dynamic_cast<value::LPi*>(this->rhs_value);
+        auto v = this->evaluator.bind_in_place(false);
 
-        auto l_codomain = this->evaluator->eval_closure(node.codomain, v->copy());
-        auto r_codomain = this->evaluator->eval_closure(rhs->codomain, move(v));
+        auto l_codomain = this->evaluator.eval_closure(node.codomain, v->copy());
+        auto r_codomain = this->evaluator.eval_closure(rhs->codomain, move(v));
 
         auto body_visitor = this->compare_with(r_codomain.get());
         auto result = body_visitor.visit(*l_codomain);
-        this->evaluator->pop_variable();
+        this->evaluator.pop_variable();
 
         return result;
     }
@@ -112,7 +112,7 @@ bool compare_level_map(map < DBLevel, MetaNat > &l, map < DBLevel, MetaNat > &r)
 
 Equality CompareVisitor::visit_level(Level& node) {
     if (this->rhs_value->ty() == ValueTy::Level) {
-        auto rhs = static_cast<value::Level*>(this->rhs_value);
+        auto rhs = dynamic_cast<value::Level*>(this->rhs_value);
         return node.pure == rhs->pure && compare_level_map(node.m, rhs->m) ?
                Equality::Eq : Equality::UnEq;
     }
@@ -123,7 +123,7 @@ Equality CompareVisitor::visit_level(Level& node) {
 
 Equality CompareVisitor::visit_univ(Univ& node) {
     if (this->rhs_value->ty() == ValueTy::Univ) {
-        auto rhs = static_cast<value::Univ*>(this->rhs_value);
+        auto rhs = dynamic_cast<value::Univ*>(this->rhs_value);
         auto param_visitor = this->compare_with(
             rhs->level.get()
         );
@@ -147,7 +147,7 @@ Equality CompareVisitor::visit_spine(Spine& node) {
 
 Equality CompareVisitor::visit_app(App& node) {
     if (this->rhs_value->ty() == ValueTy::App) {
-        auto rhs = static_cast<value::App*>(this->rhs_value);
+        auto rhs = dynamic_cast<value::App*>(this->rhs_value);
         auto param_visitor = this->compare_with(
             rhs->parameter.get()
         );
@@ -169,7 +169,7 @@ Equality CompareVisitor::visit_app(App& node) {
 
 Equality CompareVisitor::visit_var(Var& node) {
     if (this->rhs_value->ty() == ValueTy::Var) {
-        auto rhs = static_cast<value::Var*>(this->rhs_value);
+        auto rhs = dynamic_cast<value::Var*>(this->rhs_value);
         if (rhs->l == node.l) {
             auto new_visitor = this->compare_with(
                 rhs->spine.get()

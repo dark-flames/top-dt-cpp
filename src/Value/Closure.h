@@ -18,7 +18,7 @@ public:
     Closure copy() {
         auto e = this->env.copy();
         auto t = this->term->copy();
-        return Closure(e, t);
+        return Closure{e, t};
     }
 };
 }

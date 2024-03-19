@@ -20,7 +20,7 @@ public:
         switch (value.ty()) {
 #define DEF_CASE(TYPE, METHOD) \
             case ValueTy::TYPE:  \
-                return this->visit_##METHOD(*static_cast<TYPE*>(ptr));
+                return this->visit_##METHOD(*dynamic_cast<TYPE*>(ptr));
             FOR_VALUE_TYPES(DEF_CASE)
 #undef DEF_CASE
             default:

@@ -3,6 +3,7 @@
 #include <Value/Context.h>
 #include <Value/Closure.h>
 #include <Normalize/EvalVisitor.h>
+#include <Normalize/ReadBackVisitor.h>
 #include <Declaration/DeclarationResolver.h>
 #include <TypeCheck/ExprCheckVisitor.h>
 #include <TypeCheck/ExprInferVisitor.h>
@@ -12,14 +13,19 @@
 
 class TypeChecker {
 private:
-    DeclarationResolver resolver;
+
     Context context;
-    EvalVisitor eval_visitor;
-    CompareVisitor compare_visitor;
-    ExprCheckVisitor check_visitor;
-    ExprTypeInferVisitor infer_visitor;
-    LevelCheckVisitor level_visitor;
+    EvalVisitor* eval_visitor;
+    CompareVisitor* compare_visitor;
+    ExprCheckVisitor* check_visitor;
+    ExprTypeInferVisitor* infer_visitor;
+    LevelCheckVisitor* level_visitor;
+    ReadBackVisitor* read_back_visitor;
 public:
+    DeclarationResolver* resolver;
+
+    TypeChecker& add_decl(DeclarationPtr& decl);
+
     ValuePtr bind(Id& name, VTyPtr ty);
 
     ValuePtr bind_level(Id& name);
@@ -44,17 +50,25 @@ public:
 
     Equality conv(Value& l, Value* r);
 
+    TermPtr normalize_entry(Entry entry);
+
     TypeChecker() {
-        resolver = DeclarationResolver(this);
+        resolver = new DeclarationResolver(this);
         context = Context();
-        auto env = Environment();
-        auto eval_state = std::make_shared<EvalState>();
-        eval_visitor = EvalVisitor(env, eval_state);
-        compare_visitor = CompareVisitor(nullptr, &this->eval_visitor);
-        check_visitor = ExprCheckVisitor(this);
-        infer_visitor = ExprTypeInferVisitor(this);
-        level_visitor = LevelCheckVisitor(this);
+        eval_visitor = new EvalVisitor(*this->resolver);
+        compare_visitor = new CompareVisitor(nullptr, *this->eval_visitor);
+        check_visitor = new ExprCheckVisitor(this);
+        infer_visitor = new ExprTypeInferVisitor(this);
+        level_visitor = new LevelCheckVisitor(this);
+        read_back_visitor = new ReadBackVisitor(*this->eval_visitor);
+    }
+
+    ~TypeChecker() {
+        delete this->resolver;
+        delete this->eval_visitor;
+        delete this->compare_visitor;
+        delete this->check_visitor;
+        delete this->infer_visitor;
+        delete this->level_visitor;
     }
 };
-
-using TypeCheckerPtr = std::shared_ptr<TypeChecker>;

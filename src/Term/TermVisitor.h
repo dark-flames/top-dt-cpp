@@ -20,7 +20,7 @@ public:
         switch (term.ty()) {
 #define DEF_CASE(TYPE, METHOD) \
             case TermTy::TYPE:  \
-                return this->visit_##METHOD(*static_cast<TYPE*>(ptr));
+                return this->visit_##METHOD(*dynamic_cast<TYPE*>(ptr));
             FOR_TERM_TYPES(DEF_CASE)
 #undef DEF_CASE
             default:

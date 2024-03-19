@@ -1,5 +1,6 @@
 %{
 #include <Parser/ToyLexer.h>
+#include <string>
 
 #undef  YY_DECL
 #define YY_DECL yy::Parser::symbol_type ToyLexer::yylex(int __marker)
@@ -41,7 +42,7 @@ int comment_caller;
 "Univ"                         { BEGIN(SUB_LEVEL); return helper::make_UNIV(); }
 "Level"                        { BEGIN(SUB_LEVEL); return helper::make_LEVEL(); }
 "as"                           { BEGIN(SUB_LEVEL); return helper::make_AS(); }
-{DIGIT}+                       { BEGIN(SUB_LEVEL); return helper::make_LNAT(atoi(yytext)); }
+{DIGIT}+                       { BEGIN(SUB_LEVEL); return helper::make_LNAT(std::stoi(yytext)); }
 {ID_CHAR_START}{ID_CHAR}*      {
                                     BEGIN(SUB_LEVEL);
                                     return helper::make_ID(yytext);

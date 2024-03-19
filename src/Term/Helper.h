@@ -108,7 +108,7 @@ inline TermPtr l_suc(TermPtr level) {
     return make_term_ptr<LSuc>(level);
 }
 
-inline TermPtr l_plus_nat(TermPtr level, unsigned int l) {
+inline TermPtr l_plus_nat(TermPtr level, MetaNat l) {
     while (l > 0) {
         level = l_suc(std::move(level));
         --l;

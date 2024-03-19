@@ -15,7 +15,7 @@ enum class Equality : int {
 class CompareVisitor : public ValueVisitor<Equality> {
 private:
     Value* rhs_value;
-    EvalVisitor* evaluator;
+    EvalVisitor& evaluator;
 
     Equality try_rhs_eta_conv_or(Value& node, Equality equality);
 
@@ -56,8 +56,6 @@ public:
         return *this;
     }
 
-    CompareVisitor() {}
-
-    CompareVisitor(Value* rhs, EvalVisitor* evaluator) : rhs_value(rhs), evaluator(evaluator) {}
+    CompareVisitor(Value* rhs, EvalVisitor& evaluator) : rhs_value(rhs), evaluator(evaluator) {}
 };
 
