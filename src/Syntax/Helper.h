@@ -16,8 +16,8 @@ inline SyntaxPtr lambda(Id bind, SyntaxPtr body) {
 
 inline SyntaxPtr bind(std::vector<Id>& vars, SyntaxPtr body) {
     auto result = std::move(body);
-    for (auto name : vars) {
-        result = lambda(name, std::move(result));
+    for (auto name = vars.rbegin(); name != vars.rend(); ++name) {
+        result = lambda(*name, std::move(result));
     }
 
     return result;

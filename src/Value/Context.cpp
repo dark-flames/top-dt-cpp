@@ -68,7 +68,6 @@ optional<Size> ContextConsLevelNode::find_level(DBIndex index) {
 }
 
 optional<VTyWithIndex> Context::find(Id& index) {
-    std::cout << "Find" << std::endl;
     auto res = this->tail->find(index);
     if (res.has_value()) {
         std::pair<ValuePtr, DBIndex> r = std::make_pair(

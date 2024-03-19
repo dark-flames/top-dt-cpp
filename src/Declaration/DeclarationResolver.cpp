@@ -79,7 +79,7 @@ DeclarationResolver& DeclarationResolver::push_unchecked_body(UncheckedBody& bod
                 raw_body(body.name, std::move(body.body))
             ));
     } else if ((*res).second->state() == DeclarationState::UncheckedSignature) {
-        UncheckedSignature* signature = dynamic_cast<UncheckedSignature*>((*res).second.get());
+        auto signature = dynamic_cast<UncheckedSignature*>((*res).second.get());
         this->declarations[body.name] = unchecked(std::move(signature->type), std::move(body.body));
     } else {
         throw CannotPushDecl(body.name, "unchecked body");
@@ -96,7 +96,7 @@ DeclarationResolver& DeclarationResolver::push_unchecked_signature(UncheckedSign
                 raw_signature(signature.name, std::move(signature.type))
             ));
     } else if ((*res).second->state() == DeclarationState::UncheckedBody) {
-        UncheckedBody* body = dynamic_cast<UncheckedBody*>((*res).second.get());
+        auto body = dynamic_cast<UncheckedBody*>((*res).second.get());
         this->declarations[signature.name] = unchecked(std::move(signature.type), std::move(body->body));
     } else {
         throw CannotPushDecl(signature.name, "unchecked signature");
@@ -106,7 +106,7 @@ DeclarationResolver& DeclarationResolver::push_unchecked_signature(UncheckedSign
 
 DeclarationResolver& DeclarationResolver::push_unchecked(UncheckedPtr& decl) {
     if (decl->state() == DeclarationState::UncheckedSignature) {
-        UncheckedSignature* signature = dynamic_cast<UncheckedSignature*>(decl.get());
+        auto signature = dynamic_cast<UncheckedSignature*>(decl.get());
         return this->push_unchecked_signature(*signature);
     } else if (decl->state() == DeclarationState::UncheckedBody) {
         UncheckedBody* body = dynamic_cast<UncheckedBody*>(decl.get());

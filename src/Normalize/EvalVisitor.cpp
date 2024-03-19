@@ -12,7 +12,6 @@ Environment EvalVisitor::bind(bool is_level) {
         v = value::var(this->env.size());
     }
     auto result = this->env.push(v);
-    result.assert_tail();
     return result;
 }
 
@@ -50,11 +49,11 @@ ValuePtr EvalVisitor::visit_lvar(term::LVar& node) {
 
 
 ValuePtr EvalVisitor::visit_lambda(term::Lambda& node) {
-    return value::lambda(node.name, value::Closure(this->env, node.body));
+    return value::lambda(node.name, value::Closure(this->env.copy(), node.body->copy()));
 }
 
 ValuePtr EvalVisitor::visit_llambda(term::LLambda& node) {
-    return value::l_lambda(node.name, value::Closure(this->env, node.body));
+    return value::l_lambda(node.name, value::Closure(this->env.copy(), node.body->copy()));
 }
 
 ValuePtr EvalVisitor::visit_app(term::App& node) {
@@ -67,16 +66,13 @@ ValuePtr EvalVisitor::visit_app(term::App& node) {
 ValuePtr EvalVisitor::visit_pi(term::Pi& node) {
     auto domain = this->visit(*node.domain);
 
-    auto new_env = this->bind();
-    auto codomain = value::Closure(new_env, node.codomain);
+    auto codomain = Closure(this->env.copy(), node.codomain->copy());
 
     return value::pi(node.name, std::move(domain), std::move(codomain));
 }
 
 ValuePtr EvalVisitor::visit_lpi(term::LPi& node) {
-    auto new_env = this->bind(true);
-
-    return value::l_pi(node.name, value::Closure(new_env, node.codomain));
+    return value::l_pi(node.name, Closure(this->env.copy(), node.codomain->copy()));
 }
 
 ValuePtr EvalVisitor::visit_lzero(term::LZero& node) {

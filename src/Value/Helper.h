@@ -23,7 +23,7 @@ inline ValuePtr neutral_app(ValuePtr s, ValuePtr p) {
     if (ty == ValueTy::Var) {
         auto s_var = dynamic_cast<Var*>(s.get());
 
-        s_var->spine = make_value_ptr<App>(std::move(s_var->spine), p);
+        s_var->spine = make_value_ptr<App>(std::move(s_var->spine), std::move(p));
 
         return s;
     } else {
@@ -32,19 +32,19 @@ inline ValuePtr neutral_app(ValuePtr s, ValuePtr p) {
 }
 
 inline ValuePtr lambda(Id& name, Closure body) {
-    return make_value_ptr<Lambda>(name, body);
+    return make_value_ptr<Lambda>(name, std::move(body));
 }
 
 inline ValuePtr l_lambda(Id& name, Closure body) {
-    return make_value_ptr<LLambda>(name, body);
+    return make_value_ptr<LLambda>(name, std::move(body));
 }
 
 inline ValuePtr pi(Id& name, ValuePtr domain, Closure codomain) {
-    return make_value_ptr<Pi>(name, domain, codomain);
+    return make_value_ptr<Pi>(name, std::move(domain), std::move(codomain));
 }
 
 inline ValuePtr l_pi(Id& name, Closure codomain) {
-    return make_value_ptr<LPi>(name, codomain);
+    return make_value_ptr<LPi>(name, std::move(codomain));
 }
 
 inline ValuePtr l_nat(MetaNat l) {
@@ -85,7 +85,7 @@ inline ValuePtr l_max(ValuePtr l, ValuePtr r) {
 }
 
 inline ValuePtr univ(ValuePtr level) {
-    return make_value_ptr<Univ>(level);
+    return make_value_ptr<Univ>(std::move(level));
 }
 
 inline ValuePtr univ_omega() {

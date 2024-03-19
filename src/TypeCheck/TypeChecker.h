@@ -40,6 +40,8 @@ public:
 
     ValuePtr eval(Term& t);
 
+    TermPtr read_back(Value& value);
+
     TermPtr check_level(Syntax& syn);
 
     TermPtr check_expr(Syntax& syn, VTy* as);

@@ -34,7 +34,7 @@ public:
         return true;
     }
 
-    virtual ValuePtr& next() {
+    virtual ValuePtr next() {
         throw std::runtime_error("Impossible");
     }
 

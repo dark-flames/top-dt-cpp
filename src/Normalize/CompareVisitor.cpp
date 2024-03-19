@@ -67,15 +67,14 @@ Equality CompareVisitor::visit_pi(Pi& node) {
         auto v = this->evaluator.bind_in_place(false);
 
         auto l_codomain = this->evaluator.eval_closure(node.codomain, v->copy());
-        auto r_codomain = this->evaluator.eval_closure(rhs->codomain, move(v));
+        auto r_codomain = this->evaluator.eval_closure(rhs->codomain, std::move(v));
 
         auto body_visitor = this->compare_with(r_codomain.get());
         auto codomain_result = body_visitor.visit(*l_codomain);
         this->evaluator.pop_variable();
 
         return merge_equality(domain_result, codomain_result);
-    }
-    {
+    } else {
         return Equality::UnEq;
     }
 }
@@ -86,15 +85,14 @@ Equality CompareVisitor::visit_lpi(LPi& node) {
         auto v = this->evaluator.bind_in_place(false);
 
         auto l_codomain = this->evaluator.eval_closure(node.codomain, v->copy());
-        auto r_codomain = this->evaluator.eval_closure(rhs->codomain, move(v));
+        auto r_codomain = this->evaluator.eval_closure(rhs->codomain, std::move(v));
 
         auto body_visitor = this->compare_with(r_codomain.get());
         auto result = body_visitor.visit(*l_codomain);
         this->evaluator.pop_variable();
 
         return result;
-    }
-    {
+    } else {
         return Equality::UnEq;
     }
 }
@@ -113,10 +111,13 @@ bool compare_level_map(map < DBLevel, MetaNat > &l, map < DBLevel, MetaNat > &r)
 Equality CompareVisitor::visit_level(Level& node) {
     if (this->rhs_value->ty() == ValueTy::Level) {
         auto rhs = dynamic_cast<value::Level*>(this->rhs_value);
-        return node.pure == rhs->pure && compare_level_map(node.m, rhs->m) ?
-               Equality::Eq : Equality::UnEq;
-    }
-    {
+        if (node.m.empty() && rhs->m.empty()) {
+            return node.pure == rhs->pure ? Equality::Eq : Equality::UnEq;
+        } else {
+            return node.pure == rhs->pure && compare_level_map(node.m, rhs->m) ?
+                   Equality::Eq : Equality::ConditionallyEq;
+        }
+    } else {
         return Equality::UnEq;
     }
 }
@@ -129,8 +130,7 @@ Equality CompareVisitor::visit_univ(Univ& node) {
         );
         return param_visitor.visit(*node.level) == Equality::Eq ?
                Equality::Eq : Equality::UnEq;
-    }
-    {
+    } else {
         return Equality::UnEq;
     }
 }
@@ -161,8 +161,7 @@ Equality CompareVisitor::visit_app(App& node) {
         } else {
             return Equality::UnEq;
         }
-    }
-    {
+    } else {
         return Equality::UnEq;
     }
 }
@@ -182,8 +181,7 @@ Equality CompareVisitor::visit_var(Var& node) {
         } else {
             return Equality::ConditionallyEq;
         }
-    }
-    {
+    } else {
         return this->try_rhs_eta_conv_or(node, Equality::ConditionallyEq);
     }
 }

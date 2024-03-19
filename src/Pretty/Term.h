@@ -43,6 +43,8 @@ private:
 protected:
     void visit_var(term::Var& target) final;
 
+    void visit_def_ref(term::DefRef& node) override;
+
     void visit_lambda(term::Lambda& node) final;
 
     void visit_llambda(term::LLambda& node) final;

@@ -13,12 +13,10 @@ public:
     Environment env;
     TermPtr term;
 
-    Closure(Environment& env, TermPtr& term) : env(env), term(std::move(term)) {}
+    Closure(Environment env, TermPtr term) : env(env), term(std::move(term)) {}
 
     Closure copy() {
-        auto e = this->env.copy();
-        auto t = this->term->copy();
-        return Closure{e, t};
+        return Closure{this->env.copy(), this->term->copy()};
     }
 };
 }

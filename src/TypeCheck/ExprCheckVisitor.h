@@ -20,8 +20,10 @@ protected:
 public:
     TermPtr visit(Syntax& node) override;
 
-    void set_ty(VTy* ty) {
+    VTy* set_ty(VTy* ty) {
+        auto old = this->as;
         this->as = ty;
+        return old;
     }
 
     ExprCheckVisitor() {}

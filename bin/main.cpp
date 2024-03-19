@@ -29,7 +29,6 @@ int main(int argc, char* argv[]) {
         for (auto&& decl : decls) {
             type_checker->add_decl(decl);
         }
-
         auto result = type_checker->normalize_entry("main");
         delete type_checker;
         auto printer_state = make_shared<TermPrettyPrinterState>();

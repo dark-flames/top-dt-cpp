@@ -87,18 +87,12 @@ public:
         return this->tail->size();
     }
 
-    void assert_tail() {
-        assert(this->tail.get() != nullptr);
-    }
-
     /**
      * This function will now affect *this, but just return the new environment.
      */
     Environment push(ValuePtr& value) {
-        this->assert_tail();
         auto ptr = std::make_shared<EnvConsNode>(this->tail, value);
         auto new_tail = std::static_pointer_cast<EnvNode>(ptr);
-        assert(new_tail.get() != nullptr);
         return Environment(new_tail);
     }
 
@@ -115,7 +109,6 @@ public:
     }
 
     Environment copy() {
-        this->assert_tail();
         return Environment(this->tail);
     }
 };

@@ -116,6 +116,10 @@ void TermPrettyPrinter::visit_lpi(LPi& node) {
     *this->result << token::omega <=> node.name <=> token::dot <=> codomain;
 }
 
+void TermPrettyPrinter::visit_def_ref(DefRef& node) {
+    *this->result << node.entry;
+}
+
 BlockPtr LevelPrettyPrinter::sub_pretty(Term& term) {
     auto printer = this->term_printer->create_level_printer();
 

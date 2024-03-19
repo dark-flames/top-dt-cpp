@@ -70,13 +70,19 @@ ValuePtr TypeChecker::eval(Term& t) {
     return this->eval_visitor->visit(t);
 }
 
+TermPtr TypeChecker::read_back(Value& value) {
+    return this->read_back_visitor->visit(value);
+}
+
 TermPtr TypeChecker::check_level(Syntax& syn) {
     return this->level_visitor->visit(syn);
 }
 
 TermPtr TypeChecker::check_expr(Syntax& syn, VTy* as) {
-    this->check_visitor->set_ty(as);
-    return this->check_visitor->visit(syn);
+    auto old = this->check_visitor->set_ty(as);
+    auto result = this->check_visitor->visit(syn);
+    this->check_visitor->set_ty(old);
+    return result;
 }
 
 TyAndLevel TypeChecker::check_ty(Syntax& syn) {

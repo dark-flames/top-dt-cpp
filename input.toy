@@ -22,7 +22,7 @@ Nat_0 = Nat 0
 zero_0 : Nat_0
 zero_0 = zero 0
 
-suc_0 : Nat_0
+suc_0 : Nat_0 -> Nat_0
 suc_0 = suc 0
 
 n3 : Nat_0
