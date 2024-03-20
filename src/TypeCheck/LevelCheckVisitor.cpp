@@ -19,3 +19,17 @@ TermPtr LevelCheckVisitor::visit_lsuc(syntax::LSuc& node) {
     return term::l_suc(this->visit(*node.level));
 }
 
+TermPtr LevelCheckVisitor::visit(Syntax& node) {
+    switch (node.ty()) {
+        case SyntaxTy::Ref:
+        case SyntaxTy::LMax:
+        case SyntaxTy::LNat:
+        case SyntaxTy::LSuc:
+            return SyntaxVisitor<TermPtr>::visit(node);
+        default:
+            auto e = NotLevelTerm(node.copy());
+            this->type_checker->throw_err(e);
+            throw ImpossibleException("");
+    }
+}
+

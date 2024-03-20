@@ -116,3 +116,35 @@ public:
 
     virtual DocumentPtr format(TypeCheckTracer& tracer);
 };
+
+class InLanguageLevel : public TypeCheckException {
+public:
+    InLanguageLevel() {}
+
+    virtual DocumentPtr format(TypeCheckTracer& tracer);
+};
+
+class InLanguageLevelTerm : public TypeCheckException {
+private:
+    SyntaxPtr term;
+public:
+    InLanguageLevelTerm(SyntaxPtr term) : term(std::move(term)) {}
+
+    virtual DocumentPtr format(TypeCheckTracer& tracer);
+};
+
+class CannotInferLambda : public TypeCheckException {
+    SyntaxPtr term;
+public:
+    CannotInferLambda(SyntaxPtr term) : term(std::move(term)) {}
+
+    virtual DocumentPtr format(TypeCheckTracer& tracer);
+};
+
+class NotLevelTerm : public TypeCheckException {
+    SyntaxPtr term;
+public:
+    NotLevelTerm(SyntaxPtr term) : term(std::move(term)) {}
+
+    virtual DocumentPtr format(TypeCheckTracer& tracer);
+};

@@ -93,4 +93,34 @@ TermAndType ExprTypeInferVisitor::visit_univ(syntax::Univ& node) {
     );
 }
 
+TermAndType ExprTypeInferVisitor::visit_level(syntax::Level& node) {
+    auto e = InLanguageLevel();
+    this->type_checker->throw_err(e);
+    throw ImpossibleException("");
+}
+
+TermAndType ExprTypeInferVisitor::visit_lambda(syntax::Lambda& node) {
+    auto e = CannotInferLambda(node.copy());
+    this->type_checker->throw_err(e);
+    throw ImpossibleException("");
+}
+
+TermAndType ExprTypeInferVisitor::visit_lmax(syntax::LMax& node) {
+    auto e = InLanguageLevelTerm(node.copy());
+    this->type_checker->throw_err(e);
+    throw ImpossibleException("");
+}
+
+TermAndType ExprTypeInferVisitor::visit_lnat(syntax::LNat& node) {
+    auto e = InLanguageLevelTerm(node.copy());
+    this->type_checker->throw_err(e);
+    throw ImpossibleException("");
+}
+
+std::pair<TermPtr, VTyPtr> ExprTypeInferVisitor::visit_lsuc(syntax::LSuc& node) {
+    auto e = InLanguageLevelTerm(node.copy());
+    this->type_checker->throw_err(e);
+    throw ImpossibleException("");
+}
+
 

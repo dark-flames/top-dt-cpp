@@ -81,3 +81,38 @@ DocumentPtr UnificationException::format(TypeCheckTracer& tracer) {
 
     return res;
 }
+
+DocumentPtr InLanguageLevel::format(TypeCheckTracer& tracer) {
+    auto res = std::make_unique<Document>();
+    *res << "Level cannot be used as a term, as it is a meta-level term." << token::endl;
+
+    return res;
+}
+
+DocumentPtr InLanguageLevelTerm::format(TypeCheckTracer& tracer) {
+    auto res = std::make_unique<Document>();
+    auto syn = tracer.pretty_syntax(*this->term);
+    *res << "Level expression:" << token::endl;
+    *res << syn << token::endl;
+    *res << "was used in the language, but its a meta-level term." << token::endl;
+
+    return res;
+}
+
+DocumentPtr CannotInferLambda::format(TypeCheckTracer& tracer) {
+    auto res = std::make_unique<Document>();
+    auto syn = tracer.pretty_syntax(*this->term);
+    *res << "Cannot infer type of lambda expression:" << token::endl;
+    *res << syn << token::endl;
+
+    return res;
+}
+
+DocumentPtr NotLevelTerm::format(TypeCheckTracer& tracer) {
+    auto res = std::make_unique<Document>();
+    auto syn = tracer.pretty_syntax(*this->term);
+    *res << "The expression is not a level term:" << token::endl;
+    *res << syn << token::endl;
+    *res << "which expected to be." << token::endl;
+    return res;
+}

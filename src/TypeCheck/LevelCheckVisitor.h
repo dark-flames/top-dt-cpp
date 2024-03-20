@@ -22,6 +22,9 @@ protected:
     TermPtr visit_lsuc(syntax::LSuc& node) override;
 
 public:
+    TermPtr visit(Syntax& term) override;
+
+public:
     LevelCheckVisitor() {}
 
     LevelCheckVisitor(TypeChecker* type_checker) : type_checker(type_checker) {}

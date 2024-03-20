@@ -16,7 +16,7 @@ using TyAndLevel = std::pair<TermPtr, std::optional<VTyPtr>>;
 
 class ExprTypeInferVisitor : public SyntaxVisitor<TermAndType> {
 private:
-    TypeChecker* type_checker;
+    TypeChecker* type_checker{};
 protected:
     [[maybe_unused]] TermAndType visit_ref(syntax::Ref& node) final;
 
@@ -26,6 +26,15 @@ protected:
 
     TermAndType visit_univ(syntax::Univ& node) final;
 
+    TermAndType visit_level(syntax::Level& node) final;
+
+    TermAndType visit_lambda(syntax::Lambda& node) final;
+
+    TermAndType visit_lmax(syntax::LMax& node) final;
+
+    TermAndType visit_lnat(syntax::LNat& node) final;
+
+    TermAndType visit_lsuc(syntax::LSuc& node) final;
 public:
     ExprTypeInferVisitor() {}
 
