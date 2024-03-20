@@ -51,7 +51,7 @@ public:
 
     Block& push_block(BlockPtr& block);
 
-    Block& sub_block(const std::function<BlockPtr(BlockPtr&)>& inner);
+    Block& sub_block(std::function<void(Block&)> inner);
 
     Block& set_wrapper(BlockWrapper w) {
         this->wrapper = w;
@@ -78,18 +78,6 @@ public:
 
     Block& operator<<(BlockPtr& block) {
         return this->push_block(block);
-    }
-
-    Block& operator<=>(const std::string& token) {
-        return *this << " " << token;
-    }
-
-    Block& operator<=>(const char* token) {
-        return *this << " " << token;
-    }
-
-    Block& operator<=>(BlockPtr& block) {
-        return *this << " " << block;
     }
 };
 

@@ -86,14 +86,14 @@ Block& Block::push_block(BlockPtr& block) {
     return *this;
 }
 
-Block& Block::sub_block(const function<BlockPtr(BlockPtr&)>& inner) {
+Block& Block::sub_block(function<void(Block&)> inner) {
     auto block = make_unique<Block>(
         BlockWrapper::None,
         this->style,
         0
     );
-    auto res = inner(block);
-    this->push_block(res);
+    inner(*block);
+    this->push_block(block);
     return *this;
 }
 

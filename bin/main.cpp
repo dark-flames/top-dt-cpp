@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
         auto result = type_checker->normalize_entry("main");
         delete type_checker;
         auto printer_state = make_shared<TermPrettyPrinterState>();
-        auto pretty_printer = TermPrettyPrinter(printer_state);
+        auto pretty_printer = TermPrettyPrinter(Precedence::Doc, Associativity::None, printer_state);
 
         auto block = pretty_printer.pretty_inline(result);
         cout << "Normalize into:" << block->format_inline() << endl;

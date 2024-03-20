@@ -8,7 +8,7 @@
 #include <TypeCheck/ExprCheckVisitor.h>
 #include <TypeCheck/ExprInferVisitor.h>
 #include <TypeCheck/LevelCheckVisitor.h>
-#include <Pretty/Term.h>
+#include <Pretty/TermPrettyPrinter.h>
 #include <memory>
 
 class TypeChecker {
