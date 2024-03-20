@@ -5,96 +5,102 @@
 using namespace term;
 using namespace std;
 
+TermPrettyPrinterState::TermPrettyPrinterState(
+    Precedence pred,
+    Associativity assoc
+) : precedence(pred), associativity(assoc) {}
+
 TermPrettyPrinter& TermPrettyPrinter::push_name(string& n) {
-    this->state->name_stack.push_back(n);
+    this->name_stack.push_back(n);
     return *this;
 }
 
 TermPrettyPrinter& TermPrettyPrinter::pop_name() {
-    this->state->name_stack.pop_back();
+    this->name_stack.pop_back();
     return *this;
 }
 
 string TermPrettyPrinter::get_name(DBIndex i) const {
-    return this->state->name_stack.at(this->state->name_stack.size() - 1 - i);
+    return this->name_stack.at(this->name_stack.size() - 1 - i);
 }
 
-BlockPtr TermPrettyPrinter::sub_pretty(Precedence pred, Associativity assoc, Term& term) {
-    auto printer = TermPrettyPrinter(pred, assoc, this->state);
+DocumentPtr TermPrettyPrinter::sub_pretty(Precedence pred, Associativity assoc, Term& term) {
+    auto state = this->swap_state(TermPrettyPrinterState(pred, assoc));
+    auto result = this->visit(term);
 
-    printer.visit(term);
+    this->recovery(state);
 
-    if (this->state->block_tabs) {
-        printer.result->tab();
-    }
-
-    return std::move(printer.result);
+    return result;
 }
 
-LevelPrettyPrinter TermPrettyPrinter::create_level_printer() {
-    return LevelPrettyPrinter(this, this->precedence, this->associativity);
-}
+DocumentPtr TermPrettyPrinter::pretty_print_level(Term& node) {
+    auto state = this->get_state();
 
-void TermPrettyPrinter::pretty_print_level(Term& node) {
-    auto level_printer = LevelPrettyPrinter(this, this->precedence, this->associativity);
-
+    auto level_printer = LevelPrettyPrinter(this);
     level_printer.visit(node);
+    auto doc = level_printer.get_result();
+
+    this->recovery(state);
+    return doc;
 }
 
-void TermPrettyPrinter::with_precedence(Precedence pred, function<void(Block&)> callback) {
+DocumentPtr TermPrettyPrinter::with_precedence(
+    Precedence pred, function<void(Document&)> callback
+) {
+    BlockWrapper wrapper = BlockWrapper::None;
     if (
-        (this->precedence > pred) ||
-        (this->precedence == pred && this->associativity != Associativity::Right)
+        (this->get_state().precedence > pred) || (
+            this->get_state().precedence == pred &&
+            this->get_state().associativity != Associativity::Right
+        )
         ) {
-        this->result->sub_block(
-            [&](Block& b) {
-                callback(b);
-                b.set_wrapper(BlockWrapper::Parentheses);
-            }
-        );
-    } else {
-        this->result->sub_block(callback);
+        wrapper = BlockWrapper::Parentheses;
     }
+
+    auto doc = make_unique<Document>(wrapper);
+    callback(*doc);
+
+    return doc;
 }
 
-void TermPrettyPrinter::visit_var(Var& target) {
-    this->with_precedence(
-        Precedence::Atom, [&](auto& block) {
-            block << this->get_name(target.i);
+DocumentPtr TermPrettyPrinter::visit_var(Var& target) {
+    return this->with_precedence(
+        Precedence::Atom, [&](auto& doc) {
+            doc << this->get_name(target.i);
         }
     );
 }
 
-void TermPrettyPrinter::visit_def_ref(DefRef& node) {
-    this->with_precedence(
-        Precedence::Atom, [&](auto& block) {
-            block << node.entry;
+DocumentPtr TermPrettyPrinter::visit_def_ref(DefRef& node) {
+    return this->with_precedence(
+        Precedence::Atom, [&](auto& doc) {
+            doc << node.entry;
         }
     );
 }
 
-void TermPrettyPrinter::visit_lambda(Lambda& node) {
+DocumentPtr TermPrettyPrinter::visit_lambda(Lambda& node) {
     auto lambda_visitor = LambdaPrettyPrinter(this);
-    lambda_visitor.visit(node);
+    return lambda_visitor.visit(node);
 }
 
-void TermPrettyPrinter::visit_llambda(LLambda& node) {
+DocumentPtr TermPrettyPrinter::visit_llambda(LLambda& node) {
     auto lambda_visitor = LambdaPrettyPrinter(this);
-    lambda_visitor.visit(node);
+    return lambda_visitor.visit(node);
 }
 
-void TermPrettyPrinter::visit_app(App& node) {
+DocumentPtr TermPrettyPrinter::visit_app(App& node) {
     auto fun = this->sub_pretty(Precedence::App, Associativity::Left, *node.fun);
 
     auto param = this->sub_pretty(Precedence::App, Associativity::Left, *node.param);
-    this->with_precedence(
-        Precedence::App, [&](auto& block) {
-            block << fun << token::space << param;
+    return this->with_precedence(
+        Precedence::App, [&](auto& doc) {
+            doc << fun << token::app_split << param;
         }
     );
 }
 
-void TermPrettyPrinter::visit_pi(Pi& node) {
+DocumentPtr TermPrettyPrinter::visit_pi(Pi& node) {
     auto domain = this->sub_pretty(
         node.name == "_" ? Precedence::Abs : Precedence::Atom,
         Associativity::None,
@@ -105,116 +111,134 @@ void TermPrettyPrinter::visit_pi(Pi& node) {
     auto codomain = this->sub_pretty(Precedence::Abs, Associativity::Right, *node.codomain);
     this->pop_name();
 
-    this->with_precedence(
-        Precedence::Abs, [&](auto& block) {
-            if (node.name != "_") {
-                block << token::left_paren << token::space
-                      << node.name << token::space
-                      << token::colon << token::space;
-        }
-
-            block << domain << token::space;
-
-            if (node.name != "_") {
-                block << token::right_paren;
+    return this->with_precedence(
+        Precedence::Abs, [&](auto& doc) {
+            DocumentPtr domain_doc;
+            if (node.name == "_") {
+                domain_doc = std::move(domain);
+            } else {
+                domain_doc = this->with_precedence(
+                    Precedence::Doc, [&](auto& s_doc) {
+                        s_doc << node.name << token::space
+                              << token::colon << token::space
+                              << domain;
+                    }
+                );
             }
 
-            block << token::arrow << codomain;
+            doc << domain_doc << token::space << token::arrow << token::after_arrow << codomain;
         }
     );
 }
 
-void TermPrettyPrinter::visit_lpi(LPi& node) {
+DocumentPtr TermPrettyPrinter::visit_lpi(LPi& node) {
     this->push_name(node.name);
     auto codomain = this->sub_pretty(Precedence::Abs, Associativity::Right, *node.codomain);
     this->pop_name();
 
-    this->with_precedence(
-        Precedence::Abs, [&](auto& block) {
+    return this->with_precedence(
+        Precedence::Abs, [&](auto& doc) {
+            DocumentPtr domain = this->with_precedence(
+                Precedence::Atom, [&](auto& s_doc) {
+                    s_doc << token::level;
+                }
+            );
             if (node.name != "_") {
-                block << token::left_paren << token::space
-                      << node.name << token::space
-                      << token::colon << token::space
-                      << token::level << token::space
-                      << token::right_paren;
-            } else {
-                block << token::level;
+                domain = this->with_precedence(
+                    Precedence::Doc, [&](auto& s_doc) {
+                        s_doc << node.name << token::space
+                              << token::colon << token::space
+                              << std::move(domain);
+                    }
+                );
             }
 
-            block << token::space << token::arrow << codomain;
+            doc << domain << token::space << token::arrow << token::after_arrow << codomain;
         }
     );
 }
 
-void TermPrettyPrinter::visit_univ(Univ& node) {
+DocumentPtr TermPrettyPrinter::visit_univ(Univ& node) {
     auto level = this->sub_pretty(Precedence::Abs, Associativity::None, *node.level);
 
-    this->with_precedence(
+    return this->with_precedence(
         Precedence::Abs, [&](auto& block) {
-            block << token::univ << token::space << level;
+            block << token::univ << token::app_split << level;
         }
     );
 }
 
-void TermPrettyPrinter::visit_univ_omega(UnivOmega& node) {
-    this->with_precedence(
+DocumentPtr TermPrettyPrinter::visit_univ_omega(UnivOmega& node) {
+    return this->with_precedence(
         Precedence::Atom, [&](auto& block) {
             block << token::omega;
         }
     );
 }
 
-void TermPrettyPrinter::visit_lmax(LMax& node) {
-    this->pretty_print_level(node);
+DocumentPtr TermPrettyPrinter::visit_lmax(LMax& node) {
+    return this->pretty_print_level(node);
 }
 
-void TermPrettyPrinter::visit_lzero(LZero& node) {
-    this->pretty_print_level(node);
+DocumentPtr TermPrettyPrinter::visit_lzero(LZero& node) {
+    return this->pretty_print_level(node);
 }
 
-void TermPrettyPrinter::visit_lvar(LVar& node) {
-    this->pretty_print_level(node);
+DocumentPtr TermPrettyPrinter::visit_lvar(LVar& node) {
+    return this->pretty_print_level(node);
 }
 
-void TermPrettyPrinter::visit_lsuc(LSuc& node) {
-    this->pretty_print_level(node);
+DocumentPtr TermPrettyPrinter::visit_lsuc(LSuc& node) {
+    return this->pretty_print_level(node);
 }
 
-BlockPtr LevelPrettyPrinter::sub_pretty(Term& term) {
-    auto printer = this->term_printer->create_level_printer();
+TermPrettyPrinter::TermPrettyPrinter(Precedence pred, Associativity assoc) :
+    WithState(TermPrettyPrinterState(pred, assoc)) {}
 
-    printer.visit(term);
-
-    return printer.get_result();
+DocumentPtr LevelPrettyPrinter::sub_pretty(Term& term) {
+    auto state = this->term_printer->swap_state(
+        TermPrettyPrinterState(
+            Precedence::App,
+            Associativity::Left
+        ));
+    auto sub_printer = LevelPrettyPrinter(this->term_printer);
+    sub_printer.visit(term);
+    this->term_printer->recovery(state);
+    return sub_printer.get_result();
 }
 
-BlockPtr LevelPrettyPrinter::get_result() {
+DocumentPtr LevelPrettyPrinter::get_result() {
     if (!this->base.has_value()) {
-        auto block = this->term_printer
-            ->create_block();
+        auto doc = make_unique<Document>();
 
-        block->push(to_string(this->offset));
+        *doc << to_string(this->offset);
 
-        this->base = std::move(block);
+        return doc;
     } else if (this->offset != 0) {
-        *this->base.value() << token::space << token::add << token::space << to_string(this->offset);
+        *this->base.value() << token::space
+                            << token::add << token::after_op
+                            << to_string(this->offset);
     }
 
     return std::move(this->base.value());
 }
 
 void LevelPrettyPrinter::visit_lmax(LMax& node) {
-    this->clear_result();
     auto l = this->sub_pretty(*node.l);
     auto r = this->sub_pretty(*node.r);
 
-    *l << token::space << token::lmax << token::space << r;
-
-    this->base = std::move(l);
+    this->base = this->term_printer->with_precedence(
+        Precedence::App,
+        [&](auto& doc) {
+            doc << l << token::space << token::lmax << token::after_op << r;
+        }
+    );
+    this->offset = 0;
 }
 
 void LevelPrettyPrinter::visit_lzero(LZero& node) {
-    this->clear_result();
+    this->offset = 0;
+    this->base = {};
 }
 
 void LevelPrettyPrinter::visit_lsuc(LSuc& node) {
@@ -223,15 +247,16 @@ void LevelPrettyPrinter::visit_lsuc(LSuc& node) {
 }
 
 void LevelPrettyPrinter::visit_lvar(LVar& node) {
-    this->clear_result();
-    auto block = this->term_printer->create_block();
-
-    *block << this->term_printer->get_name(node.i);
-
-    this->base = std::move(block);
+    this->offset = 0;
+    this->base = this->term_printer->with_precedence(
+        Precedence::Atom,
+        [&](auto& doc) {
+            doc << this->term_printer->get_name(node.i);
+        }
+    );
 }
 
-void LambdaPrettyPrinter::finish(Term& body) {
+DocumentPtr LambdaPrettyPrinter::finish(Term& body) {
     for (auto& name : this->bind_list) {
         this->term_printer->push_name(name);
     }
@@ -247,32 +272,32 @@ void LambdaPrettyPrinter::finish(Term& body) {
         this->term_printer->pop_name();
     }
 
-    this->term_printer->with_precedence(
+    return this->term_printer->with_precedence(
         Precedence::Abs, [&](auto& block) {
             block << token::lambda << token::space;
             for (auto& name : this->bind_list) {
                 block << name << token::space;
             }
-            block << token::arrow << token::space
+            block << token::arrow << token::after_arrow
                   << body_block;
         }
     );
 }
 
-void LambdaPrettyPrinter::visit_lambda(Lambda& node) {
+DocumentPtr LambdaPrettyPrinter::visit_lambda(Lambda& node) {
     this->bind_list.push_back(node.name);
     if (node.body->ty() == TermTy::Lambda || node.body->ty() == TermTy::LLambda) {
-        this->visit(*node.body);
+        return this->visit(*node.body);
     } else {
-        this->finish(*node.body);
+        return this->finish(*node.body);
     }
 }
 
-void LambdaPrettyPrinter::visit_llambda(LLambda& node) {
+DocumentPtr LambdaPrettyPrinter::visit_llambda(LLambda& node) {
     this->bind_list.push_back(node.name);
     if (node.body->ty() == TermTy::Lambda || node.body->ty() == TermTy::LLambda) {
-        this->visit(*node.body);
+        return this->visit(*node.body);
     } else {
-        this->finish(*node.body);
+        return this->finish(*node.body);
     }
 }

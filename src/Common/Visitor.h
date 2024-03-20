@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include <functional>
 
 template<typename N>
 using NodePtr = std::unique_ptr<N>;

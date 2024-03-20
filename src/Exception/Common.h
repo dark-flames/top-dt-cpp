@@ -24,8 +24,6 @@ public:
 };
 
 class ImpossibleException : public Exception {
-private:
-
 public:
     std::string msg;
 
@@ -39,7 +37,6 @@ public:
 };
 
 class ParseException : public Exception {
-private:
 
 public:
     std::string msg;
@@ -50,5 +47,16 @@ public:
 
     const char* what() const throw() {
         return "ParseException";
+    }
+};
+
+class CannotFormat : public Exception {
+public:
+    int tabs;
+
+    CannotFormat(int tabs) : tabs(tabs) {}
+
+    const char* what() const throw() {
+        return "CannotFormat";
     }
 };

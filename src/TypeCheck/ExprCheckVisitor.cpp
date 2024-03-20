@@ -45,16 +45,6 @@ TermPtr ExprCheckVisitor::visit(Syntax& node) {
             if (cov_res == Equality::Eq) {
                 return std::move(result.first);
             } else {
-                auto ty = this->type_checker->read_back(*result.second);
-                auto expect = this->type_checker->read_back(*this->as);
-
-                auto tm_block = TermPrettyPrinter::pretty_inline(result.first);
-                auto ty_block = TermPrettyPrinter::pretty_inline(ty);
-                auto expect_block = TermPrettyPrinter::pretty_inline(expect);
-
-                cout << "Term:" << endl << tm_block->format_inline() << endl;
-                cout << "Actual:" << endl << ty_block->format_inline() << endl;
-                cout << "Expect" << endl << expect_block->format_inline() << endl;
                 throw UnificationException();
             }
     }

@@ -2,4 +2,4 @@
 
 #include <Pretty/Tokens.h>
 #include <Pretty/TermPrettyPrinter.h>
-#include <Pretty/Block.h>
+#include <Pretty/Document.h>

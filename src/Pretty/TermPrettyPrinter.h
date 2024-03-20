@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Pretty/Block.h>
+#include <Pretty/Document.h>
 #include <Term/Nodes.h>
 #include <Term/RefNode.h>
 #include <Term/TermVisitor.h>
@@ -27,108 +27,78 @@ enum class Associativity : int {
 };
 
 class TermPrettyPrinterState {
-    std::vector<std::string> name_stack;
-    Indentation block_style;
-    bool block_tabs;
 public:
-    TermPrettyPrinterState(
-        Indentation block_style = Indentation::Inline,
-        bool block_tabs = false
-    ) : block_style(block_style), block_tabs(block_tabs) {}
-
-    friend class TermPrettyPrinter;
-};
-
-using StatePtr = std::shared_ptr<TermPrettyPrinterState>;
-
-class TermPrettyPrinter : public TermVisitor<void> {
-private:
-    BlockPtr result;
-    StatePtr state;
     Precedence precedence;
     Associativity associativity;
+
+    TermPrettyPrinterState(Precedence pred, Associativity assoc);
+};
+
+class TermPrettyPrinter :
+    public TermVisitor<DocumentPtr>, public WithState<TermPrettyPrinterState> {
+private:
+    std::vector<std::string> name_stack;
 
     TermPrettyPrinter& push_name(std::string& n);
 
     TermPrettyPrinter& pop_name();
 
-    std::string get_name(DBIndex i) const;
+    [[nodiscard]] std::string get_name(DBIndex i) const;
 
-    BlockPtr sub_pretty(Precedence pred, Associativity assoc, Term& term);
+    DocumentPtr sub_pretty(Precedence pred, Associativity assoc, Term& term);
 
-    LevelPrettyPrinter create_level_printer();
+    DocumentPtr pretty_print_level(Term& node);
 
-    void pretty_print_level(Term& node);
-
-    void with_precedence(Precedence pred, std::function<void(Block&)> callback);
+    DocumentPtr with_precedence(Precedence pred, std::function<void(Document&)> callback);
 protected:
-    void visit_var(term::Var& target) final;
+    DocumentPtr visit_var(term::Var& target) final;
 
-    void visit_def_ref(term::DefRef& node) override;
+    DocumentPtr visit_def_ref(term::DefRef& doc) override;
 
-    void visit_lambda(term::Lambda& node) final;
+    DocumentPtr visit_lambda(term::Lambda& node) final;
 
-    void visit_llambda(term::LLambda& node) final;
+    DocumentPtr visit_llambda(term::LLambda& node) final;
 
-    void visit_app(term::App& node) final;
+    DocumentPtr visit_app(term::App& doc) final;
 
-    void visit_pi(term::Pi& node) final;
+    DocumentPtr visit_pi(term::Pi& doc) final;
 
-    void visit_lpi(term::LPi& node) final;
+    DocumentPtr visit_lpi(term::LPi& node) final;
 
-    void visit_univ(term::Univ& node) final;
+    DocumentPtr visit_univ(term::Univ& node) final;
 
-    void visit_univ_omega(term::UnivOmega& node) final;
+    DocumentPtr visit_univ_omega(term::UnivOmega& node) final;
 
-    void visit_lmax(term::LMax& node) override;
+    DocumentPtr visit_lmax(term::LMax& node) override;
 
-    void visit_lzero(term::LZero& node) override;
+    DocumentPtr visit_lzero(term::LZero& node) override;
 
-    void visit_lvar(term::LVar& node) override;
+    DocumentPtr visit_lvar(term::LVar& node) override;
 
-    void visit_lsuc(term::LSuc& node) override;
+    DocumentPtr visit_lsuc(term::LSuc& node) override;
 
 public:
-    explicit TermPrettyPrinter(Precedence pred, Associativity assoc, StatePtr& s) {
-        state = s;
-        precedence = pred;
-        associativity = assoc;
-        result = create_block();
-    }
-
-    BlockPtr create_block() {
-        return std::make_unique<Block>(
-            BlockWrapper::None,
-            this->state->block_style,
-            this->state->block_tabs
-        );
-    }
-
-    static BlockPtr pretty_inline(TermPtr& term) {
-        auto state = std::make_shared<TermPrettyPrinterState>();
-        auto printer = TermPrettyPrinter(Precedence::Doc, Associativity::None, state);
-
-        printer.visit(*term);
-
-        return std::move(printer.result);
-    }
+    explicit TermPrettyPrinter(
+        Precedence pred = Precedence::Doc,
+        Associativity assoc = Associativity::None
+    );
 
     friend class LevelPrettyPrinter;
 
     friend class LambdaPrettyPrinter;
 };
 
-class LambdaPrettyPrinter : public TermVisitor<void> {
+class LambdaPrettyPrinter : public TermVisitor<DocumentPtr> {
 private:
     TermPrettyPrinter* term_printer;
     std::vector<std::string> bind_list;
 
-    void finish(Term& body);
+    DocumentPtr finish(Term& body);
 
 protected:
-    void visit_lambda(term::Lambda& node) override;
+    DocumentPtr visit_lambda(term::Lambda& node) override;
 
-    void visit_llambda(term::LLambda& node) override;
+    DocumentPtr visit_llambda(term::LLambda& node) override;
 
 public:
     explicit LambdaPrettyPrinter(
@@ -139,32 +109,18 @@ public:
 class LevelPrettyPrinter : public TermVisitor<void> {
 private:
     TermPrettyPrinter* term_printer;
-    Precedence precedence;
-    Associativity associativity;
-
     int offset;
-    std::optional<BlockPtr> base;
+    std::optional<DocumentPtr> base;
 
-    LevelPrettyPrinter& clear_result() {
-        this->offset = 0;
-        this->base = {};
-
-        return *this;
-    }
-
-    BlockPtr sub_pretty(Term& term);
+    DocumentPtr sub_pretty(Term& term);
 public:
-    LevelPrettyPrinter(
-        TermPrettyPrinter* term_printer,
-        Precedence precedence,
-        Associativity associativity
+    explicit LevelPrettyPrinter(
+        TermPrettyPrinter* term_printer
     ) : term_printer(term_printer),
         offset(0),
-        base({}),
-        precedence(precedence),
-        associativity(associativity) {}
+        base({}) {}
 
-    BlockPtr get_result();
+    DocumentPtr get_result();
 
 protected:
     void visit_lmax(term::LMax& node) final;
