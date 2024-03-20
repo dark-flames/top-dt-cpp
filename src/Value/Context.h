@@ -43,6 +43,14 @@ public:
     virtual ContextNodePtr get_prev() {
         throw std::runtime_error("No previous segment.");
     }
+
+    virtual std::string get_name() {
+        throw std::runtime_error("No name.");
+    }
+
+    virtual std::optional<VTyPtr> get_ty() {
+        throw std::runtime_error("No name.");
+    }
 };
 
 class ContextConsNode : public ContextNode {
@@ -70,6 +78,14 @@ public:
     std::optional<Size> find_level(Id& ref) final;
 
     std::optional<Size> find_level(DBIndex index) final;
+
+    std::string get_name() final {
+        return this->name;
+    }
+
+    std::optional<VTyPtr> get_ty() final {
+        return this->ty->copy();
+    }
 
     friend class Context;
 };
@@ -99,6 +115,14 @@ public:
 
     virtual std::optional<Size> find_level(DBIndex index) final;
 
+    std::string get_name() final {
+        return this->name;
+    }
+
+    std::optional<VTyPtr> get_ty() final {
+        return {};
+    }
+
     friend class Context;
 };
 
@@ -120,6 +144,10 @@ public:
 
     [[nodiscard]] Size size() {
         return this->tail->size();
+    }
+
+    ContextNodePtr get_tail() {
+        return this->tail;
     }
 
     std::optional<VTyWithIndex> find(Id& index);

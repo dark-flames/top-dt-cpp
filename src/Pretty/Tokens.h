@@ -26,6 +26,7 @@ constexpr const char* under_line = "_";
 constexpr const char* lmax = "∩";
 constexpr const char* omega = "Ω";
 constexpr const char* level = "Level";
+constexpr const char* comma = ",";
 
 constexpr const SplitType block_split = SplitType::WrappedBlock;
 constexpr const SplitType endl = SplitType::NewLine;

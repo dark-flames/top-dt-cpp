@@ -21,7 +21,7 @@ private:
 
     Declaration* get_decl(Entry& entry);
 
-    bool dependency_detect(Entry& from, Entry& to);
+    void dependency_detect(Entry& from, Entry& to);
 
     WithSignature* try_check_signature(Entry& entry);
 

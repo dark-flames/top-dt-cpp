@@ -30,7 +30,9 @@ TermPtr ExprCheckVisitor::visit_lambda(syntax::Lambda& node) {
         this->type_checker->pop();
         return term::l_lambda(node.name, std::move(body));
     } else {
-        throw NonPi();
+        auto e = NonPi(node.copy(), this->as->copy());
+        this->type_checker->throw_err(e);
+        throw ImpossibleException("");
     }
 }
 
@@ -45,7 +47,13 @@ TermPtr ExprCheckVisitor::visit(Syntax& node) {
             if (cov_res == Equality::Eq) {
                 return std::move(result.first);
             } else {
-                throw UnificationException();
+                auto e = UnificationException(
+                    node.copy(),
+                    result.second->copy(),
+                    this->as->copy()
+                );
+                this->type_checker->throw_err(e);
+                throw ImpossibleException("");
             }
     }
 }

@@ -16,6 +16,7 @@ class LambdaPrettyPrinter;
 enum class Precedence : int {
     Doc = 0,
     Abs = 1,
+    Op = 5,
     App = 10,
     Atom = 114514
 };
@@ -29,9 +30,9 @@ enum class Associativity : int {
 class TermPrettyPrinterState {
 public:
     Precedence precedence;
-    Associativity associativity;
+    Associativity position;
 
-    TermPrettyPrinterState(Precedence pred, Associativity assoc);
+    TermPrettyPrinterState(Precedence pred, Associativity pos);
 };
 
 class TermPrettyPrinter :
@@ -39,17 +40,13 @@ class TermPrettyPrinter :
 private:
     std::vector<std::string> name_stack;
 
-    TermPrettyPrinter& push_name(std::string& n);
-
-    TermPrettyPrinter& pop_name();
-
     [[nodiscard]] std::string get_name(DBIndex i) const;
 
-    DocumentPtr sub_pretty(Precedence pred, Associativity assoc, Term& term);
+    DocumentPtr sub_pretty(Precedence pred, Associativity pos, Term& term);
 
     DocumentPtr pretty_print_level(Term& node);
 
-    DocumentPtr with_precedence(Precedence pred, std::function<void(Document&)> callback);
+    DocumentPtr with_precedence(Precedence pred, Associativity assoc, std::function<void(Document&)> callback);
 protected:
     DocumentPtr visit_var(term::Var& target) final;
 
@@ -80,8 +77,14 @@ protected:
 public:
     explicit TermPrettyPrinter(
         Precedence pred = Precedence::Doc,
-        Associativity assoc = Associativity::None
+        Associativity assoc = Associativity::Left
     );
+
+    TermPrettyPrinter& push_name(std::string& n);
+
+    TermPrettyPrinter& pop_name();
+
+    TermPrettyPrinter& clean_names();
 
     friend class LevelPrettyPrinter;
 
@@ -112,7 +115,7 @@ private:
     int offset;
     std::optional<DocumentPtr> base;
 
-    DocumentPtr sub_pretty(Term& term);
+    DocumentPtr sub_pretty(Term& term, Associativity pos);
 public:
     explicit LevelPrettyPrinter(
         TermPrettyPrinter* term_printer

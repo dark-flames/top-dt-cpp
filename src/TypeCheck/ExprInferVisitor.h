@@ -18,7 +18,7 @@ class ExprTypeInferVisitor : public SyntaxVisitor<TermAndType> {
 private:
     TypeChecker* type_checker;
 protected:
-    TermAndType visit_ref(syntax::Ref& node) final;
+    [[maybe_unused]] TermAndType visit_ref(syntax::Ref& node) final;
 
     TermAndType visit_app(syntax::App& node) final;
 

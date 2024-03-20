@@ -8,6 +8,7 @@
 #include <TypeCheck/ExprCheckVisitor.h>
 #include <TypeCheck/ExprInferVisitor.h>
 #include <TypeCheck/LevelCheckVisitor.h>
+#include <Exception/TypeCheckTracer.h>
 #include <Pretty/TermPrettyPrinter.h>
 #include <memory>
 
@@ -21,6 +22,7 @@ private:
     ExprTypeInferVisitor* infer_visitor;
     LevelCheckVisitor* level_visitor;
     ReadBackVisitor* read_back_visitor;
+    TypeCheckTracer* tracer;
 public:
     DeclarationResolver* resolver;
 
@@ -54,6 +56,8 @@ public:
 
     TermPtr normalize_entry(Entry entry);
 
+    void throw_err(TypeCheckException& exception);
+
     TypeChecker() {
         resolver = new DeclarationResolver(this);
         context = Context();
@@ -63,6 +67,7 @@ public:
         infer_visitor = new ExprTypeInferVisitor(this);
         level_visitor = new LevelCheckVisitor(this);
         read_back_visitor = new ReadBackVisitor(*this->eval_visitor);
+        tracer = new TypeCheckTracer(this, context);
     }
 
     ~TypeChecker() {

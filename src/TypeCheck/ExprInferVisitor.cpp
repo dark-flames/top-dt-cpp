@@ -16,7 +16,7 @@ ValuePtr pi_univ(optional<ValuePtr> level_l, optional<ValuePtr> level_r) {
     }
 }
 
-TermAndType ExprTypeInferVisitor::visit_ref(syntax::Ref& node) {
+[[maybe_unused]] TermAndType ExprTypeInferVisitor::visit_ref(syntax::Ref& node) {
     return this->type_checker->find_ref(node.name);
 }
 
@@ -48,7 +48,9 @@ TermAndType ExprTypeInferVisitor::visit_app(syntax::App& node) {
             std::move(res_ty)
         );
     } else {
-        throw ApplyNonPi();
+        auto e = ApplyNonPi(node.fun->copy(), f_ty->copy());
+        this->type_checker->throw_err(e);
+        throw ImpossibleException("");
     }
 }
 

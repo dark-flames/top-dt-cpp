@@ -29,19 +29,19 @@ int main(int argc, char* argv[]) {
         for (auto&& decl : decls) {
             type_checker->add_decl(decl);
         }
+
         auto result = type_checker->normalize_entry("main");
         delete type_checker;
 
         auto pretty_printer = TermPrettyPrinter();
         auto doc = pretty_printer.visit(*result);
+        auto formatter = Formatter(Style::SoftSplit, 120, 2);
         auto element = Document::as_element(doc);
-        auto formatter = Formatter(Style::SoftSplit, 20, 2);
         formatter.format(*element);
         cout << "Normalize into:" << formatter.to_string() << endl;
-
+        return 0;
     } else {
         cerr << "Pleas input filename" << endl;
+        return 1;
     }
-
-    return 0;
 }

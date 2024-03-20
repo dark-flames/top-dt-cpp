@@ -8,24 +8,26 @@ Declaration* DeclarationResolver::get_decl(Entry& entry) {
     auto res = this->declarations.find(entry);
 
     if (res == this->declarations.end()) {
-        throw runtime_error("Cannot find entry " + entry);
+        auto e = UnknownReference(entry);
+        this->type_checker->throw_err(e);
+        return nullptr;
     } else {
         return res->second.get();
     }
 }
 
-bool DeclarationResolver::dependency_detect(Entry& from, Entry& to) {
+void DeclarationResolver::dependency_detect(Entry& from, Entry& to) {
     auto current = this->waiting_for.find(from);
-
+    vector<string> cycle = {from};
     while (current != this->waiting_for.end()) {
+        cycle.push_back(current->second);
         if (current->second == to) {
-            return true;
+            auto e = CyclingDependencyReference(cycle);
+            this->type_checker->throw_err(e);
         } else {
             current = this->waiting_for.find(current->second);
         }
     }
-
-    return false;
 }
 
 WithSignature* DeclarationResolver::try_check_signature(Entry& entry) {
@@ -125,6 +127,7 @@ WithSignature* DeclarationResolver::get_signature_or_waiting(Entry& entry) {
         decl->state() == DeclarationState::Finished) {
         return dynamic_cast<WithSignature*>(decl);
     } else {
+        this->dependency_detect(entry, this->current_entry);
         this->waiting_for[this->current_entry] = entry;
         auto result = this->try_check_signature(entry);
         this->waiting_for.erase(this->current_entry);
@@ -138,11 +141,13 @@ CheckedDeclaration* DeclarationResolver::get_body_or_waiting(Entry& entry) {
     if (decl->state() == DeclarationState::Finished) {
         return dynamic_cast<CheckedDeclaration*>(decl);
     } else if (decl->state() == DeclarationState::SignatureOnly) {
+        this->dependency_detect(entry, this->current_entry);
         this->waiting_for[this->current_entry] = entry;
         auto result = this->try_check(entry);
         this->waiting_for.erase(this->current_entry);
         return result;
     } else {
+        this->dependency_detect(entry, this->current_entry);
         this->waiting_for[this->current_entry] = entry;
         this->try_check_signature(entry);
         auto result = this->try_check(entry);

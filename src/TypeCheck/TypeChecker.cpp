@@ -39,15 +39,11 @@ TermAndType TypeChecker::find_ref(Id& name) {
             std::move(context_ref.value().first)
         );
     } else {
-        try {
-            auto ref = this->resolver->get_signature_or_waiting(name);
-            return make_pair(
-                term::def_ref(name),
-                ref->get_ty().copy()
-            );
-        } catch (UnknownEntry& e) {
-            throw UnknownReference(e);
-        }
+        auto ref = this->resolver->get_signature_or_waiting(name);
+        return make_pair(
+            term::def_ref(name),
+            ref->get_ty().copy()
+        );
     }
 }
 
@@ -97,7 +93,9 @@ TyAndLevel TypeChecker::check_ty(Syntax& syn) {
         optional<ValuePtr> nothing = {};
         return make_pair(std::move(term), std::move(nothing));
     } else {
-        throw NotType();
+        auto e = NotType(syn.copy(), ty->copy());
+        this->throw_err(e);
+        throw ImpossibleException("");
     }
 }
 
@@ -117,4 +115,8 @@ TermPtr TypeChecker::normalize_entry(Entry entry) {
     auto decl_value = this->eval(*copied);
 
     return this->read_back_visitor->visit(*decl_value);
+}
+
+void TypeChecker::throw_err(TypeCheckException& exception) {
+    this->tracer->throw_error(exception);
 }
