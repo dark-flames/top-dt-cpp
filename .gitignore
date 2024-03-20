@@ -3,5 +3,5 @@
 .env
 
 cmake-build-debug
-
-input
+build
+test.toy

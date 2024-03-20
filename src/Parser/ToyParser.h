@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Parser/ToyLexer.h>
-#include <Parser/Parser.tab.h>
+#include <Parser.tab.h>
 #include <sstream>
 
 class ToyParser {

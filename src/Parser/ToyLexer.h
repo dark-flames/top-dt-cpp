@@ -5,7 +5,7 @@
 
 #endif
 
-#include <Parser/Parser.tab.h>
+#include <Parser.tab.h>
 #include <Exception/Common.h>
 
 class ToyLexer : public yyFlexLexer {

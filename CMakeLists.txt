@@ -26,7 +26,6 @@ find_package(BISON REQUIRED)
 
 include_directories(src)
 include_directories(grammar)
-include_directories(${FLEX_INCLUDE_DIRS})
 
 add_subdirectory(src)
 add_subdirectory(bin)
