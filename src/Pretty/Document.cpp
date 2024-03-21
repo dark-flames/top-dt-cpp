@@ -42,7 +42,6 @@ Document& Document::operator<<(DocumentPtr& document) {
 }
 
 Document& Document::operator<<(DocumentPtr&& document) {
-    auto e = SubDocumentElement(std::move(document));
     return this->push(make_unique<SubDocumentElement>(std::move(document)));
 }
 
